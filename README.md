@@ -2,6 +2,8 @@
 
 A REDCap external module providing enhancements for EM management.
 
+**Feature and pull requests** (against _master_) are welcome!
+
 ## Requirements
 
 - REDCAP 9.5.0 or newer (tested with REDCap 9.7.2).
