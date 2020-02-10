@@ -12,9 +12,21 @@ class EMMToolsExternalModule extends AbstractExternalModule {
 
     function redcap_every_page_top($project_id = null) {
 
-        if (!SUPER_USER) return;
-        $fw = $this->framework;
+        $fw = $this->framework; // Shortcut to the EM framework.
 
+        // Hide this module from normal users and exit the hook if not a super-user.
+        if (!SUPER_USER) {
+            if (PageInfo::IsProjectExternalModulesManager()) {
+                ?>
+                <script>
+                    $(function() {
+                        $('tr[data-module="<?=$this->PREFIX?>"]').remove();
+                    })
+                </script>
+                <?php
+            }
+            return;
+        } 
         // Module Manager Shortcut.
         if (PageInfo::IsProjectExternalModulesManager() && $this->getSystemSetting("module-manager-shortcut")) {
             $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/control_center.php?return-pid={$project_id}";
