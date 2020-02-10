@@ -2,7 +2,7 @@
 
 A REDCap external module providing enhancements for EM management.
 
-<span style="color:red;">**Feature and pull requests** (against _master_) are welcome!</span>
+![#f03c15](https://placehold.it/30x08/f03c15/000000?text=+) **Feature and pull requests** (against _master_) are welcome!
 
 ## Requirements
 
