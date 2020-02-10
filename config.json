@@ -1,0 +1,60 @@
+{
+    "name": "External Module Management Tools",
+    "tt_name": "module_name",
+    "namespace": "RUB\\EMMToolsExternalModule",
+    "description": "An external module providing enhancements for EM management.",
+    "tt_description": "module_desc",
+    "documentation": "README.md",
+    "tt_documentation": "module_docs",
+    "authors": [
+        {
+            "name": "Günther Rezniczek",
+            "email": "guenther.rezniczek@rub.de",
+            "institution": "Ruhr-Universität Bochum"
+        }
+    ],
+    "framework-version": 3,
+    "permissions": [
+        "redcap_every_page_top"
+    ],
+    "enable-every-page-hooks-on-system-pages": true,
+    "links": {
+        "project": [
+        ],
+        "system": [
+
+        ]
+    },
+    "system-settings": [
+        {
+            "key": "module-manager-shortcut",
+            "name": "<b>Module Manager Shortcut:</b><br>Adds a shortcut link to 'Control Center &gt; External Modules' on the Project Module Manager page",
+            "tt_name": "config_mmslink",
+            "type": "checkbox"
+        },
+        {
+            "key": "module-manager-reveal",
+            "name": "<b>Module System Configuration Shortcut:</b><br>Adds a link to project-enabled modules that shows the 'Control Center &gt; External Modules' page for this module",
+            "tt_name": "config_reveallink",
+            "type": "checkbox"
+        },
+        {
+            "key": "module-manager-reveal-timeout",
+            "name": "Timeout (in milliseconds) before search is triggered (default = 50)",
+            "tt_name": "config_reveallink_timeout",
+            "type": "text",
+            "branchingLogic": {
+                "field": "config_reveallink",
+                "value": true
+            }
+        }
+    ],
+    "project-settings": [
+    ],
+    "compatibility": {
+        "php-version-min": "5.6.0",
+        "php-version-max": "",
+        "redcap-version-min": "9.5.0",
+        "redcap-version-max": ""
+     }
+}
