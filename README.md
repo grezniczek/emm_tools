@@ -21,10 +21,16 @@ Manual installation:
 
 ## Configuration and Effects
 
-Enable the features you want in this module's **system configuration**. Features provided are:
+Enable the features you want in this module's **system configuration**. Make sure to **enable the module for all projects** (or for specific projects, e.g. during development). In any case, this module will be invisible to non-admin users.
+
+Features provided are:
 
 - **Module Manager Shortcut** - Adds a shortcut link to 'Control Center > External Modules' on the _Project Module Manager_ page.
-- **Module System Configuration Shortcut** - Adds shortcut links for individual modules on the _Project Module Manager_ page, linking to the _Module Manager_ with search set to the respective module's name. Furthermore, a 'Return to project' link is displayed on the _Module Manager_ page.
+  ![Screensnip: Module Manager Shortcut](images/module_manager_shortcut.png)
+- **Module System Configuration Shortcut** - Adds shortcut links for individual modules on the _Project Module Manager_ page, linking to the _Module Manager_ with search set to the respective module's name.
+  ![Screensnip: Module System Configuration Shortcut](images/reveal_module_shortcut.png)
+- Both provide a 'Return to project' link is displayed on the _Module Manager_ page.
+  ![Screensnip: Return to Project Shortcut](images/return_to_project.png)
 
 ## Changelog
 
