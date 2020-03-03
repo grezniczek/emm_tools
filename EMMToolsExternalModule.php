@@ -116,15 +116,15 @@ class EMMToolsExternalModule extends AbstractExternalModule {
 
 class PageInfo {
     public static function IsSystemExternalModulesManager() {
-        return strpos(PAGE, "/ExternalModules/manager/control_center.php") || strpos(PAGE, "/external_modules/manager/control_center.php");
+        return (strpos(PAGE, "ExternalModules/manager/control_center.php") !== false) || (strpos(PAGE, "external_modules/manager/control_center.php") !== false);
     }
 
     public static function IsProjectExternalModulesManager() {
-        return strpos(PAGE, "ExternalModules/manager/project.php") || strpos(PAGE, "external_modules/manager/project.php");
+        return (strpos(PAGE, "ExternalModules/manager/project.php") !== false) || (strpos(PAGE, "external_modules/manager/project.php") !== false);
     }
 
     public static function IsDevelopmentFramework($module) {
-        return strpos($module->getUrl("dummy"), "/external_modules/prefix=");
+        return strpos($module->framework->getUrl("dummy.php"), "/external_modules/?prefix=") !== false;
     }
 
     public static function HasGETParameter($name) {
