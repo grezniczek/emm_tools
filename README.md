@@ -6,7 +6,7 @@ A REDCap external module providing enhancements for EM management.
 
 ## Requirements
 
-- REDCAP 9.5.0 or newer (tested with REDCap 9.7.2).
+- REDCAP 9.5.0 or newer (tested with REDCap 9.7.7).
 
 ## Installation
 
@@ -36,4 +36,5 @@ Features provided are:
 
 Version | Description
 ------- | --------------------
+v1.0.1  | Bug fixes.
 v1.0.0  | Initial release.
