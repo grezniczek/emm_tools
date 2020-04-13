@@ -2,7 +2,7 @@
 
 A REDCap external module providing enhancements for EM management.
 
-![#f03c15](https://placehold.it/30x10/f03c15/000000?text=+) **Feature and pull requests** (against _master_) are welcome!
+**Feature and pull requests** (against _master_) are welcome!
 
 ## Requirements
 
@@ -34,10 +34,15 @@ Features provided are:
   ![Screensnip: Return to Project Shortcut](images/return_to_project.png)
 - **Module config query in MySQL Simple Admin** - Adds shortcut links for individual modules on the _Project Module Manager_ page, which open the _MySQL Simple Admin_ external module in a new browser tab (automatically performing a query for the module's settings in the current project's context).
 
+## Testing
+
+Instructions for testing the module can be found [here](?prefix=emm_tools&page=tests/EMMToolsManualTest.md).
+
 ## Changelog
 
 Version | Description
 ------- | --------------------
+v1.1.1  | Minor enhancements.<br>Add instructions for testing the module.
 v1.1.0  | New feature: Query module config in MySQL Simple Admin
 v1.0.1  | Bug fixes.
 v1.0.0  | Initial release.
