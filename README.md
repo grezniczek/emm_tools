@@ -42,6 +42,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.1.2  | Minor bug fix.
 v1.1.1  | Minor enhancements.<br>Add instructions for testing the module.
 v1.1.0  | New feature: Query module config in MySQL Simple Admin
 v1.0.1  | Bug fixes.
