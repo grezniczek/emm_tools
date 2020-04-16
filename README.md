@@ -6,7 +6,7 @@ A REDCap external module providing enhancements for EM management.
 
 ## Requirements
 
-- REDCAP 9.5.0 or newer (tested with REDCap 9.7.7).
+- REDCAP 9.5.0 or newer (tested with REDCap 9.7.7, 9.8.2).
 - MySQL Simple Admin external module (for certain features).
 
 ## Installation
@@ -42,6 +42,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.1.3  | Fix a bug that would emerge with the release of EM framework v5.
 v1.1.2  | Minor bug fix.
 v1.1.1  | Minor enhancements.<br>Add instructions for testing the module.
 v1.1.0  | New feature: Query module config in MySQL Simple Admin

@@ -178,7 +178,7 @@ class EMMToolsExternalModule extends AbstractExternalModule {
      **/
     public function _isModuleEnabled($prefix, $pid = null) {
         if (method_exists($this->framework, "isModuleEnabled")) {
-            return $this->isModuleEnabled($prefix, $pid);
+            return $this->framework->isModuleEnabled($prefix, $pid);
         }
         else {
             if (empty($prefix)) {
