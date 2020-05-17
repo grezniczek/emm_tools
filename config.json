@@ -50,7 +50,7 @@
         },
         {
             "key": "mysql-simple-admin-links",
-            "name": "<b>MySQL Simple Admin Shortcut:</b><br>Adds a link to project-enabled modules that opens the MySQL Simple Admin EM page, prefilled with a query for this module's settings",
+            "name": "<b>MySQL Simple Admin Shortcut:</b><br>Adds a link to enabled modules that opens the MySQL Simple Admin EM page, prefilled with a query for this module's settings",
             "tt_name": "config_mysqlsimpleadmin",
             "type": "checkbox"
         }

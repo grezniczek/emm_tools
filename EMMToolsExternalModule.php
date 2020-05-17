@@ -114,7 +114,7 @@ class EMMToolsExternalModule extends AbstractExternalModule {
 
 
         // MySQL Simple Admin Shortcut
-        if ((PageInfo::IsProjectExternalModulesManager() || PageInfo::IsMySQLSimpleAdmin()) &&
+        if ((PageInfo::IsProjectExternalModulesManager() || PageInfo::IsSystemExternalModulesManager() || PageInfo::IsMySQLSimpleAdmin()) &&
             $this->getSystemSetting("mysql-simple-admin-links") && 
             $this->_isModuleEnabled("mysql_simple_admin")) {
             if (PageInfo::IsProjectExternalModulesManager()) {
@@ -143,16 +143,43 @@ class EMMToolsExternalModule extends AbstractExternalModule {
                 </script>
                 <?php
             }
-            if (PageInfo::IsMySQLSimpleAdmin()) {
+            else if (PageInfo::IsSystemExternalModulesManager()) {
+                $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid=NULL&module-prefix=";
+                ?>
+                <script>
+                    $(function(){
+                        $('#external-modules-enabled tr[data-module]').each(function() {
+                            var tr = $(this)
+                            var moduleName = tr.attr('data-module')
+                            var link = $('<a target="_blank" href="<?=$link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-database" style="margin-right:2px;"></i> <?=$fw->tt("mysqllink_label")?></a>')
+                            var td = tr.find('td').first();
+                            if (td.find('div.external-modules-byline').length) {
+                                var div = td.find('div.external-modules-byline').first()
+                                div.append(link)
+                            }
+                            else {
+                                var div = $('<div class="external-modules-byline"></div>')
+                                div.append(link)
+                                link.css('display', 'block')
+                                link.css('margin-top', '7px')
+                                td.append(div)
+                            }
+                        })
+                    })
+                </script>
+                <?php
+            }
+            else if (PageInfo::IsMySQLSimpleAdmin()) {
                 $prefix = $_GET["module-prefix"];
                 $pid = $_GET["query-pid"];
+                $pid_clause = $pid === "NULL" ? "project_id is null" : "project_id = {$pid}";
                 $result = $fw->query("
                     select external_module_id 
                     from redcap_external_modules 
                     where directory_prefix = ?",
                     [ $prefix ]);
                 $module_id = ($result->fetch_assoc())["external_module_id"];
-                $query = "select * from redcap_external_module_settings where external_module_id = {$module_id} and project_id = {$pid}";
+                $query = "select * from redcap_external_module_settings where external_module_id = {$module_id} and {$pid_clause} \n-- {$prefix}";
                 if ($module_id !== null) {
                 ?>
                 <script>

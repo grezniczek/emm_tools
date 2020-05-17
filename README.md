@@ -32,7 +32,7 @@ Features provided are:
   ![Screensnip: Module System Configuration Shortcut](images/reveal_module_shortcut.png)
 - Both provide a 'Return to project' link is displayed on the _Module Manager_ page.
   ![Screensnip: Return to Project Shortcut](images/return_to_project.png)
-- **Module config query in MySQL Simple Admin** - Adds shortcut links for individual modules on the _Project Module Manager_ page, which open the _MySQL Simple Admin_ external module in a new browser tab (automatically performing a query for the module's settings in the current project's context).
+- **Module config query in MySQL Simple Admin** - Adds shortcut links for individual modules on the _Module Manager_ pages, which open the _MySQL Simple Admin_ external module in a new browser tab (automatically performing a query for the module's settings in the current context).
 
 ## Testing
 
@@ -42,6 +42,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.1.4  | Module config query now supports system context.
 v1.1.3  | Fix a bug that would emerge with the release of EM framework v5.
 v1.1.2  | Minor bug fix.
 v1.1.1  | Minor enhancements.<br>Add instructions for testing the module.
