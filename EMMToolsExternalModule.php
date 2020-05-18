@@ -113,7 +113,7 @@ class EMMToolsExternalModule extends AbstractExternalModule {
         }
 
 
-        // MySQL Simple Admin Shortcut
+        // MySQL Simple Admin Shortcuts
         if ((PageInfo::IsProjectExternalModulesManager() || PageInfo::IsSystemExternalModulesManager() || PageInfo::IsMySQLSimpleAdmin()) &&
             $this->getSystemSetting("mysql-simple-admin-links") && 
             $this->_isModuleEnabled("mysql_simple_admin")) {
@@ -171,16 +171,25 @@ class EMMToolsExternalModule extends AbstractExternalModule {
             }
             else if (PageInfo::IsMySQLSimpleAdmin()) {
                 $prefix = $_GET["module-prefix"];
+                $record = $_GET["query-record"];
                 $pid = $_GET["query-pid"];
                 $pid_clause = $pid === "NULL" ? "project_id is null" : "project_id = {$pid}";
-                $result = $fw->query("
-                    select external_module_id 
-                    from redcap_external_modules 
-                    where directory_prefix = ?",
-                    [ $prefix ]);
-                $module_id = ($result->fetch_assoc())["external_module_id"];
-                $query = "select * from redcap_external_module_settings where external_module_id = {$module_id} and {$pid_clause} \n-- {$prefix}";
-                if ($module_id !== null) {
+                $execute = false;
+                if ($prefix) {
+                    $result = $fw->query("
+                        select external_module_id 
+                        from redcap_external_modules 
+                        where directory_prefix = ?",
+                        [ $prefix ]);
+                    $module_id = ($result->fetch_assoc())["external_module_id"];
+                    $query = "select * from redcap_external_module_settings where external_module_id = {$module_id} and {$pid_clause} \n-- {$prefix}";
+                    $execute = $module_id !== null;
+                }
+                else if ($record) {
+                    $query = "select * from redcap_data where {$pid_clause} and record = \"{$record}\"";
+                    $execute = !empty($record);
+                }
+                if ($execute) {
                 ?>
                 <script>
                     $(function() {
@@ -191,6 +200,19 @@ class EMMToolsExternalModule extends AbstractExternalModule {
                 <?php
                 }
             }
+        }
+
+        // Query for record data.
+        if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record") && $this->_isModuleEnabled("mysql_simple_admin")) {
+            $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$_GET['id']}";
+            ?>
+            <script>
+                $(function(){
+                    var $ul = $('#recordActionDropdown')
+                    $ul.append('<li class="ui-menu-item"><a href="<?=$link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database"></i> <?=$fw->tt("mysqllink_label")?></span></a></li>')
+                })
+            </script>
+            <?php
         }
     }
 
@@ -221,6 +243,14 @@ class EMMToolsExternalModule extends AbstractExternalModule {
 }
 
 class PageInfo {
+    public static function IsRecordHomePage() {
+        return (strpos(PAGE, "DataEntry/record_home.php") !== false);
+    }
+
+    public static function IsExistingRecordHomePage() {
+        return (strpos(PAGE, "DataEntry/record_home.php") !== false) && !isset($_GET["auto"]);
+    }
+
     public static function IsSystemExternalModulesManager() {
         return (strpos(PAGE, "ExternalModules/manager/control_center.php") !== false) || (strpos(PAGE, "external_modules/manager/control_center.php") !== false);
     }

@@ -53,6 +53,12 @@
             "name": "<b>MySQL Simple Admin Shortcut:</b><br>Adds a link to enabled modules that opens the MySQL Simple Admin EM page, prefilled with a query for this module's settings",
             "tt_name": "config_mysqlsimpleadmin",
             "type": "checkbox"
+        },
+        {
+            "key": "mysql-simple-admin-query-record",
+            "name": "<b>Query Record</b> (MySQL Simple Admin Shortcut)<br>Adds a link to _record actions_ that opens the MySQL Simple Admin EM page, prefilled with a query for this record in the redcap_data table",
+            "tt_name": "config_queryrecord",
+            "type": "checkbox"
         }
     ],
     "project-settings": [
