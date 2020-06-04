@@ -173,7 +173,7 @@ class EMMToolsExternalModule extends AbstractExternalModule {
                 $prefix = $_GET["module-prefix"];
                 $record = $_GET["query-record"];
                 $pid = $_GET["query-pid"];
-                $pid_clause = $pid === "NULL" ? "project_id is null" : "project_id = {$pid}";
+                $pid_clause = $pid === "NULL" ? "project_id IS NULL" : "project_id = {$pid}";
                 $execute = false;
                 if ($prefix) {
                     $result = $fw->query("
@@ -182,11 +182,13 @@ class EMMToolsExternalModule extends AbstractExternalModule {
                         where directory_prefix = ?",
                         [ $prefix ]);
                     $module_id = ($result->fetch_assoc())["external_module_id"];
-                    $query = "select * from redcap_external_module_settings where external_module_id = {$module_id} and {$pid_clause} \n-- {$prefix}";
+                    $query = "SELECT * FROM redcap_external_module_settings\n" . 
+                             "WHERE external_module_id = {$module_id} -- {$prefix}\n" . 
+                             "AND {$pid_clause}";
                     $execute = $module_id !== null;
                 }
                 else if ($record) {
-                    $query = "select * from redcap_data where {$pid_clause} and record = \"{$record}\"";
+                    $query = "SELECT * FROM redcap_data WHERE {$pid_clause} AND record = \"{$record}\"";
                     $execute = !empty($record);
                 }
                 if ($execute) {

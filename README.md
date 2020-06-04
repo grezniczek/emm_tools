@@ -43,6 +43,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.1.6  | Finetuning of SQL sent to MySQL Simple Admin.
 v1.1.5  | Adds a link to the record actions that queries the record with MySQL Simple Admin.
 v1.1.4  | Module config query now supports system context.
 v1.1.3  | Fix a bug that would emerge with the release of EM framework v5.
