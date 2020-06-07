@@ -172,7 +172,8 @@ class EMMToolsExternalModule extends AbstractExternalModule {
             else if (PageInfo::IsMySQLSimpleAdmin()) {
                 $prefix = $_GET["module-prefix"];
                 $record = $_GET["query-record"];
-                $pid = $_GET["query-pid"];
+                $mode = $_GET["query-for"];
+                $pid = (int)$_GET["query-pid"];
                 $pid_clause = $pid === "NULL" ? "project_id IS NULL" : "project_id = {$pid}";
                 $execute = false;
                 if ($prefix) {
@@ -187,8 +188,15 @@ class EMMToolsExternalModule extends AbstractExternalModule {
                              "AND {$pid_clause}";
                     $execute = $module_id !== null;
                 }
-                else if ($record) {
-                    $query = "SELECT * FROM redcap_data WHERE {$pid_clause} AND record = \"{$record}\"";
+                else if ($record && $pid > 0) {
+                    $record = db_escape($record);
+                    if ($mode == "data") {
+                        $query = "SELECT * FROM redcap_data\n WHERE `project_id` = {$pid} AND `record` = '{$record}'";
+                    }
+                    else if ($mode == "logs") {
+                        $log_event_table = \REDCap::getLogEventTable($pid);
+                        $query = "SELECT * FROM {$log_event_table}\n WHERE `project_id` = 49 AND `pk` = '{$record}'\n ORDER BY `log_event_id` DESC";
+                    }
                     $execute = !empty($record);
                 }
                 if ($execute) {
@@ -206,12 +214,14 @@ class EMMToolsExternalModule extends AbstractExternalModule {
 
         // Query for record data.
         if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record") && $this->_isModuleEnabled("mysql_simple_admin")) {
-            $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$_GET['id']}";
+            $data_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$_GET['id']}&query-for=data";
+            $logs_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$_GET['id']}&query-for=logs";
             ?>
             <script>
                 $(function(){
                     var $ul = $('#recordActionDropdown')
-                    $ul.append('<li class="ui-menu-item"><a href="<?=$link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database"></i> <?=$fw->tt("mysqllink_label")?></span></a></li>')
+                    $ul.append('<li class="ui-menu-item"><a href="<?=$data_link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database"></i> <?=$fw->tt("mysqllink_record_data")?></span></a></li>')
+                    $ul.append('<li class="ui-menu-item"><a href="<?=$logs_link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database" style="color:red;"></i> <?=$fw->tt("mysqllink_record_logs")?></span></a></li>')
                 })
             </script>
             <?php

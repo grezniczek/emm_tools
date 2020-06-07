@@ -56,8 +56,14 @@
         },
         {
             "key": "mysql-simple-admin-query-record",
-            "name": "<b>Query Record</b> (MySQL Simple Admin Shortcut)<br>Adds a link to _record actions_ that opens the MySQL Simple Admin EM page, prefilled with a query for this record in the redcap_data table",
-            "tt_name": "config_queryrecord",
+            "name": "<b>Query Record Data</b> (MySQL Simple Admin Shortcut)<br>Adds a link to _record actions_ that opens the MySQL Simple Admin EM page, prefilled with a query for this record in the redcap_data table",
+            "tt_name": "config_queryrecord_data",
+            "type": "checkbox"
+        },
+        {
+            "key": "mysql-simple-admin-query-record-log",
+            "name": "<b>Query Record Log</b> (MySQL Simple Admin Shortcut)<br>Adds a link to _record actions_ that opens the MySQL Simple Admin EM page, prefilled with a query for this record in the redcap_log_event table",
+            "tt_name": "config_queryrecord_log",
             "type": "checkbox"
         }
     ],
