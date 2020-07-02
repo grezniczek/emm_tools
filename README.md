@@ -44,8 +44,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
-v1.2.2  | Requires REDCap 10.1.0 (new granular admin privileges).
-v1.2.1  | Bug fix: Record log querying could not be turned on/off separately.
+v1.2.1  | Bug fix: Record log querying could not be turned on/off separately; requires REDCap 10.1.0 (new granular admin privileges).
 v1.2.0  | Adds a link to the record actions that queries the record's log with MySQL Simple Admin.
 v1.1.6  | Finetuning of SQL sent to MySQL Simple Admin.
 v1.1.5  | Adds a link to the record actions that queries the record with MySQL Simple Admin.
