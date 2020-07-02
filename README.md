@@ -6,7 +6,7 @@ A REDCap external module providing enhancements for EM management.
 
 ## Requirements
 
-- REDCAP 9.5.0 or newer (tested with REDCap 9.7.7, 9.8.2).
+- REDCAP 10.1.0 or newer.
 - MySQL Simple Admin external module (for certain features).
 
 ## Installation
@@ -22,7 +22,7 @@ Manual installation:
 
 ## Configuration and Effects
 
-Enable the features you want in this module's **system configuration**. Make sure to **enable the module for all projects** (or for specific projects, e.g. during development). In any case, this module will be invisible to non-admin users.
+Enable the features you want in this module's **system configuration**. Make sure to **enable the module for all projects** (or for specific projects, e.g. during development). In any case, this module will be invisible to non-admin users. To use all features, at least _Access to all projects and data with maximum user privileges_ and _Access to Control Center dashboards_ are required.
 
 Features provided are:
 
@@ -44,6 +44,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.2.2  | Requires REDCap 10.1.0 (new granular admin privileges).
 v1.2.1  | Bug fix: Record log querying could not be turned on/off separately.
 v1.2.0  | Adds a link to the record actions that queries the record's log with MySQL Simple Admin.
 v1.1.6  | Finetuning of SQL sent to MySQL Simple Admin.
