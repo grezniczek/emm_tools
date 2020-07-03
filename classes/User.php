@@ -1,6 +1,7 @@
 <?php namespace DE\RUB\EMMToolsExternalModule;
 
 use ExternalModules\Framework;
+use ExternalModules\ExternalModules;
 
 class User
 {
