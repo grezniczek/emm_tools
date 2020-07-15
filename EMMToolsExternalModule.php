@@ -250,6 +250,59 @@ class EMMToolsExternalModule extends AbstractExternalModule {
         }
     }
 
+    function redcap_module_link_check_display($project_id, $link) {
+        if ($project_id && $link["tt_name"] == "link_projectobject") {
+            return (SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) ? $link : null;
+        }
+        return null;
+    }
+
+
+    function inspectProjectObject() {
+        global $Proj, $lang;
+        if (SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) {
+            ?>
+            <style>
+                #projectobject-tabContent {
+                    margin-top:0.5em;
+                    max-width:800px;
+                }
+                pre {
+                    border: none;
+                    background: none;
+                    font-size: 12px;
+                }
+                h4 {
+                    font-size: 1.2em;
+                    font-weight: bold;
+                    margin-bottom: 1em;
+                }
+                .emm-badge {
+                    font-weight: normal;
+                }
+            </style>
+            <h4><span class="badge badge-secondary emm-badge">EMM</span> <?=$this->tt("projectobjectinspector_title")?></h4>
+            <nav>
+                <div class="nav nav-tabs" id="projectobject-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="printr-tab" data-toggle="tab" href="#printr" role="tab" aria-controls="printr" aria-selected="true">print_r</a>
+                    <a class="nav-item nav-link" id="vardump-tab" data-toggle="tab" href="#vardump" role="tab" aria-controls="vardump" aria-selected="false">var_dump</a>
+                </div>
+            </nav>
+            <div class="tab-content" id="projectobject-tabContent">
+                <div class="tab-pane fade show active" id="printr" role="tabpanel" aria-labelledby="printr-tab">
+                    <pre><?php print_r($Proj); ?></pre>
+                </div>
+                <div class="tab-pane fade" id="vardump" role="tabpanel" aria-labelledby="vardump-tab">
+                    <pre><?php var_dump($Proj); ?></pre>
+                </div>
+            </div>
+            <?php
+        }
+        else {
+            print $lang["global_05"];
+        }
+    }
+
     /**
      * Checks whether a module is enabled for a project or on the system.
      *

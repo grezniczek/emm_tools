@@ -35,6 +35,7 @@ Features provided are:
 - **Module config query in MySQL Simple Admin** - Adds shortcut links for individual modules on the _Module Manager_ pages, which open the _MySQL Simple Admin_ external module in a new browser tab (automatically performing a query for the module's settings in the current context).
 - **Record data query link** - Adds a shortcut link for to the _Record Actions_ menu on the _Record Home Page_ that opens the _MySQL Simple Admin_ external module in a new browser tab, automatically performing a query for the record in the _redcap_data_ table.
 - **Record log query link** - Adds a shortcut link for to the _Record Actions_ menu on the _Record Home Page_ that opens the _MySQL Simple Admin_ external module in a new browser tab, automatically performing a query for the record in the appropriate _redcap_log_event_ table.
+- **Project Object Inspector** - A plugin page that prints the Project object.
 
 ## Testing
 
@@ -44,6 +45,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.3.0  | New feature: Project Object Inspector
 v1.2.1  | Bug fix: Record log querying could not be turned on/off separately; requires REDCap 10.1.0 (new granular admin privileges).
 v1.2.0  | Adds a link to the record actions that queries the record's log with MySQL Simple Admin.
 v1.1.6  | Finetuning of SQL sent to MySQL Simple Admin.

@@ -20,6 +20,13 @@
     "enable-every-page-hooks-on-system-pages": true,
     "links": {
         "project": [
+            {
+                "name": "Project Object",
+                "tt_name": "link_projectobject",
+                "icon": "fas fa-stethoscope",
+                "url": "project-object.php",
+                "show-header-and-footer": true
+            }
         ],
         "system": [
 
@@ -64,6 +71,12 @@
             "key": "mysql-simple-admin-query-record-log",
             "name": "<b>Query Record Log</b> (MySQL Simple Admin Shortcut)<br>Adds a link to _record actions_ that opens the MySQL Simple Admin EM page, prefilled with a query for this record in the redcap_log_event table",
             "tt_name": "config_queryrecord_log",
+            "type": "checkbox"
+        },
+        {
+            "key": "enable-projectobject",
+            "name": "Enable the <b>Project Object</b> link (displays the project object)",
+            "tt_name": "config_enable_projectobject",
             "type": "checkbox"
         }
     ],
