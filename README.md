@@ -45,6 +45,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.3.1  | Bug fix: Project was not fully loaded before display.
 v1.3.0  | New feature: Project Object Inspector
 v1.2.1  | Bug fix: Record log querying could not be turned on/off separately; requires REDCap 10.1.0 (new granular admin privileges).
 v1.2.0  | Adds a link to the record actions that queries the record's log with MySQL Simple Admin.

@@ -261,6 +261,15 @@ class EMMToolsExternalModule extends AbstractExternalModule {
     function inspectProjectObject() {
         global $Proj, $lang;
         if (SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) {
+            // Fully(?) populate data
+            $Proj->loadEvents();
+            $Proj->loadEventsForms();
+            $Proj->loadMetadata();
+            $Proj->loadProjectValues();
+            $Proj->loadSurveys();
+            $Proj->getUniqueEventNames();
+            $Proj->getUniqueGroupNames();
+            $Proj->getGroups();
             ?>
             <style>
                 #projectobject-tabContent {
