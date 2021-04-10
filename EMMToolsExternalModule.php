@@ -14,7 +14,8 @@ class EMMToolsExternalModule extends AbstractExternalModule {
     function redcap_every_page_top($project_id = null) {
 
         $fw = $this->framework; // Shortcut to the EM framework.
-        $user = new User($fw, USERID);
+        $user_id = defined("USERID") ? USERID : null;
+        $user = new User($fw, $user_id);
 
         // Hide this module from users who cannot install EMs.
         if (!($user->canAccessExternalModuleInstall())) {
