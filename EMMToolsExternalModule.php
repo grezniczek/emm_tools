@@ -295,6 +295,7 @@ class EMMToolsExternalModule extends AbstractExternalModule {
                 <div class="nav nav-tabs" id="projectobject-tab" role="tablist">
                     <a class="nav-item nav-link active" id="printr-tab" data-toggle="tab" href="#printr" role="tab" aria-controls="printr" aria-selected="true">print_r</a>
                     <a class="nav-item nav-link" id="vardump-tab" data-toggle="tab" href="#vardump" role="tab" aria-controls="vardump" aria-selected="false">var_dump</a>
+                    <a class="nav-item nav-link hidden" id="emm-json-tab" data-toggle="tab" href="#emm-json" role="tab" aria-controls="emm-json" aria-selected="false">JSON</a>
                 </div>
             </nav>
             <div class="tab-content" id="projectobject-tabContent">
@@ -303,6 +304,8 @@ class EMMToolsExternalModule extends AbstractExternalModule {
                 </div>
                 <div class="tab-pane fade" id="vardump" role="tabpanel" aria-labelledby="vardump-tab">
                     <pre><?php var_dump($Proj); ?></pre>
+                </div>
+                <div class="tab-pane fade" id="emm-json" role="tabpanel" aria-labelledby="emm-json-tab">
                 </div>
             </div>
             <?php
