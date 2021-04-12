@@ -14,7 +14,8 @@ class EMMToolsExternalModule extends AbstractExternalModule {
     function redcap_every_page_top($project_id = null) {
 
         $fw = $this->framework; // Shortcut to the EM framework.
-        $user = new User($fw, USERID);
+        $user_id = defined("USERID") ? USERID : null;
+        $user = new User($fw, $user_id);
 
         // Hide this module from users who cannot install EMs.
         if (!($user->canAccessExternalModuleInstall())) {
@@ -252,7 +253,7 @@ class EMMToolsExternalModule extends AbstractExternalModule {
 
     function redcap_module_link_check_display($project_id, $link) {
         if ($project_id && $link["tt_name"] == "link_projectobject") {
-            return (SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) ? $link : null;
+            return (defined("SUPER_USER") && SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) ? $link : null;
         }
         return null;
     }
@@ -260,7 +261,7 @@ class EMMToolsExternalModule extends AbstractExternalModule {
 
     function inspectProjectObject() {
         global $Proj, $lang;
-        if (SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) {
+        if (defined("SUPER_USER") && SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) {
             // Fully(?) populate data
             $Proj->loadEvents();
             $Proj->loadEventsForms();
