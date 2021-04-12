@@ -1,6 +1,6 @@
-# External Module Management Tools
+# External Module Developer Tools
 
-A REDCap external module providing enhancements for EM management.
+A REDCap external module providing tools and enhancements with regard for EM development.
 
 **Feature and pull requests** (against _master_) are welcome!
 
@@ -18,7 +18,7 @@ Automatic installation:
 Manual installation:
 
 - Clone this repo into `<redcap-root>/modules/emm_tools_v<version-number>`.
-- Go to _Control Center > Technical / Developer Tools > External Modules_ and enable 'External Module Management Tools'.
+- Go to _Control Center > Technical / Developer Tools > External Modules_ and enable 'External Module Developer Tools'.
 
 ## Configuration and Effects
 
@@ -36,15 +36,19 @@ Features provided are:
 - **Record data query link** - Adds a shortcut link for to the _Record Actions_ menu on the _Record Home Page_ that opens the _MySQL Simple Admin_ external module in a new browser tab, automatically performing a query for the record in the _redcap_data_ table.
 - **Record log query link** - Adds a shortcut link for to the _Record Actions_ menu on the _Record Home Page_ that opens the _MySQL Simple Admin_ external module in a new browser tab, automatically performing a query for the record in the appropriate _redcap_log_event_ table.
 - **Project Object Inspector** - A plugin page that prints the Project object.
+- **Show Field Annotations** - When turned on (via a link in the External Modules section of REDCap's main project-context menu), field annotations will be displayed on data entry forms and survey pages in the respective field's label. In case the field is embedded, the annotations will be appended to the embedding container.  
+  Additionally, the Online Designer overview will have EMDT badges that show the field annotations when hovered over. Note that certain operations will remove the badges until the page is reloaded.  
+  **Note**: Pages have to be reloaded after switching on/off field annotations.
 
 ## Testing
 
-Instructions for testing the module can be found [here](?prefix=emm_tools&page=tests/EMMToolsManualTest.md).
+Instructions for testing the module can be found [here](?prefix=emm_tools&page=tests/EMDToolsManualTest.md).
 
 ## Changelog
 
 Version | Description
 ------- | --------------------
+v1.4.0  | Module renamed to _External Module **Developer** Tools_.<br>New feature: Show Field Annotations.<br>New feature: Project Object as JSON.
 v1.3.3  | Bug fix: USERID check done right (avoids exceptions in some cases).
 v1.3.2  | Bug fix: SUPER_USER check done right (avoids exceptions in some cases).
 v1.3.1  | Bug fix: Project was not fully loaded before display.

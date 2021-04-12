@@ -1,4 +1,4 @@
-<?php namespace DE\RUB\EMMToolsExternalModule;
+<?php namespace DE\RUB\EMDToolsExternalModule;
 
 use ExternalModules\AbstractExternalModule;
 use InvalidArgumentException;
@@ -8,14 +8,33 @@ require_once "classes/User.php";
 /**
  * Provides enhancements to the External Module Management pages.
  */
-class EMMToolsExternalModule extends AbstractExternalModule {
+class EMDToolsExternalModule extends AbstractExternalModule {
 
+    function redcap_data_entry_form ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $repeat_instance = 1) {
+        if ($this->getProjectSetting("enable-fieldannotations") == true && $this->getProjectSetting("show-fieldannotations") == true) {
+            $this->insertFieldAnnotations($instrument);
+        }
+    }
+
+    function redcap_survey_page ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
+        if ($this->getProjectSetting("enable-fieldannotations") == true && $this->getProjectSetting("show-fieldannotations") == true) {
+            $this->insertFieldAnnotations($instrument);
+        }
+    }
 
     function redcap_every_page_top($project_id = null) {
 
         $fw = $this->framework; // Shortcut to the EM framework.
         $user_id = defined("USERID") ? USERID : null;
         $user = new User($fw, $user_id);
+
+        if ($project_id != null && 
+            $this->getProjectSetting("enable-fieldannotations") == true && 
+            $this->getProjectSetting("show-fieldannotations") == true &&
+            PageInfo::IsDesigner()
+           ) {
+            $this->insertFieldAnnotations($_GET["page"], true);
+        }
 
         // Hide this module from users who cannot install EMs.
         if (!($user->canAccessExternalModuleInstall())) {
@@ -249,19 +268,121 @@ class EMMToolsExternalModule extends AbstractExternalModule {
                 <?php
             }
         }
+
+        // Toggle Field Annotations
+        if ($user->isSuperUser() && $project_id != null && $this->getProjectSetting("enable-fieldannotations") == true) {
+            ?>
+            <script>
+                function EMDTToggleShowFieldAnnotations() {
+                    var $state = $('#emdt-fieldannotations-state')
+                    if ($state.attr('working') == '1') return
+                    var state = $state.text()
+                    $state.html('<i class="fas fa-spinner fa-spin"></i>').attr('working','1')
+                    $.ajax({
+                        url: '<?= $this->getUrl("toggle-fieldannotations.php") ?>',
+                        success: function(data, textStatus, jqXHR) {
+                            console.log('AJAX done: ', data, jqXHR)
+                            state = data
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('EMDT - Failed to toggle Show Field Annotations state: ' + errorThrown)
+                        },
+                        complete: function() {
+                            $state.text(state)
+                            $state.attr('working', '0')
+                        } 
+                    })
+                }
+            </script>
+            <?php
+        }
     }
 
     function redcap_module_link_check_display($project_id, $link) {
-        if ($project_id && $link["tt_name"] == "link_projectobject") {
+        if ($project_id && $link["key"] == "project-object-inspector") {
             return (defined("SUPER_USER") && SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) ? $link : null;
+        }
+        if ($project_id && $link["key"] == "toggle-field-annotations") {
+            if (defined("SUPER_USER") && SUPER_USER && $this->getSystemSetting("enable-fieldannotations") == true) {
+                $state = $this->getProjectSetting("show-fieldannotations") == true ? "on" : "off";
+                $link["name"] = $this->tt("link_fieldannotations") . "<b id=\"emdt-fieldannotations-state\">" . $this->tt("link_fieldannotations_{$state}") . "</b>";
+                return $link;
+            }
         }
         return null;
     }
 
+    function toggleFieldAnnotation() {
+        $state = $this->getProjectSetting("show-fieldannotations") == true;
+        $state = !$state;
+        $this->setProjectSetting("show-fieldannotations", $state);
+        $state = $state ? "on" : "off";
+        return $this->tt("link_fieldannotations_{$state}");
+    }
+
+    function insertFieldAnnotations($form, $designer = false) {
+        global $Proj;
+        $num_annotations = 0;
+        foreach ($Proj->forms[$form]["fields"] as $field => $_) {
+            $annotations = $Proj->metadata[$field]["misc"];
+            if (!empty($annotations)) {
+                print "<div class=\"emdt-field-annotation\" data-target=\"{$field}\" style=\"display:none;font-weight:normal;padding:0.5em;margin-top:0.5em;background-color:#fafafa;\"><code style=\"white-space:pre;margin-top:0.5em;\">{$annotations}</code></div>\n";
+                $num_annotations++;
+            }
+        }
+        if ($num_annotations) {
+            ?>
+            <script>
+                // EMD Tools - Append Field Annotations
+                $(function() {
+                    var designer = <?= json_encode($designer) ?>;
+                    $('.emdt-field-annotation').each(function() {
+                        var $annotation = $(this);
+                        var field = $annotation.attr('data-target');
+                        var $badge = $('<span class="badge badge-info" style="font-weight:normal;">EMDT</span>');
+                        if (designer) {
+                            $badge.attr('title', $annotation.text()).css('margin-left','1em');
+                            $('#design-' + field + ' span.od-field-icons').append($badge);
+                        }
+                        else {
+                            var embedded = $('[sq_id="' + field + '"]').hasClass('row-field-embedded');
+                            $badge.css('margin-bottom','0.5em');
+                            $annotation.prepend('<br>');
+                            $annotation.prepend($badge);
+                            $badge.after('<small><i> &ndash; ' + field + '</i></small>');
+                            if (embedded) {
+                                $badge.removeClass('badge-info').addClass('badge-warning');
+                                var $embed = $('span.rc-field-embed[var="' + field + '"]')
+                                $embed.parents('tr[sq_id]').find('td').not('.questionnum').first().append($annotation);
+                                $badge.css('cursor', 'crosshair');
+                                $badge.on('mouseenter', function() {
+                                    $embed.css('outline', 'red dotted 2px');
+                                });
+                                $badge.on('mouseleave', function() {
+                                    $embed.css('outline','none');
+                                });
+                                $badge.on('click', function() {
+                                    $embed.find('input').focus();
+                                });
+                            }
+                            else {
+                                $('#label-' + field).append($annotation);
+                            }
+                            $annotation.show();
+                        }
+                    })
+                });
+            </script>
+            <?php
+        }
+    }
 
     function inspectProjectObject() {
         global $Proj, $lang;
         if (defined("SUPER_USER") && SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) {
+
+            $script_url = $this->getUrl("js/json-viewer.js");
+            print "<script src=\"{$script_url}\"></script>\n";
             // Fully(?) populate data
             $Proj->loadEvents();
             $Proj->loadEventsForms();
@@ -271,6 +392,7 @@ class EMMToolsExternalModule extends AbstractExternalModule {
             $Proj->getUniqueEventNames();
             $Proj->getUniqueGroupNames();
             $Proj->getGroups();
+
             ?>
             <style>
                 #projectobject-tabContent {
@@ -291,24 +413,48 @@ class EMMToolsExternalModule extends AbstractExternalModule {
                     font-weight: normal;
                 }
             </style>
-            <h4><span class="badge badge-secondary emm-badge">EMM</span> <?=$this->tt("projectobjectinspector_title")?></h4>
+            <h4><?=$this->tt("projectobjectinspector_title")?></h4>
             <nav>
                 <div class="nav nav-tabs" id="projectobject-tab" role="tablist">
-                    <a class="nav-item nav-link active" id="printr-tab" data-toggle="tab" href="#printr" role="tab" aria-controls="printr" aria-selected="true">print_r</a>
+                    <a class="nav-item nav-link active" id="emm-json-tab" data-toggle="tab" href="#emm-json" role="tab" aria-controls="emm-json" aria-selected="false">JSON</a>
+                    <a class="nav-item nav-link" id="printr-tab" data-toggle="tab" href="#printr" role="tab" aria-controls="printr" aria-selected="true">print_r</a>
                     <a class="nav-item nav-link" id="vardump-tab" data-toggle="tab" href="#vardump" role="tab" aria-controls="vardump" aria-selected="false">var_dump</a>
-                    <a class="nav-item nav-link hidden" id="emm-json-tab" data-toggle="tab" href="#emm-json" role="tab" aria-controls="emm-json" aria-selected="false">JSON</a>
                 </div>
             </nav>
             <div class="tab-content" id="projectobject-tabContent">
-                <div class="tab-pane fade show active" id="printr" role="tabpanel" aria-labelledby="printr-tab">
+                <div class="tab-pane fade" id="printr" role="tabpanel" aria-labelledby="printr-tab">
                     <pre><?php print_r($Proj); ?></pre>
                 </div>
                 <div class="tab-pane fade" id="vardump" role="tabpanel" aria-labelledby="vardump-tab">
                     <pre><?php var_dump($Proj); ?></pre>
                 </div>
-                <div class="tab-pane fade" id="emm-json" role="tabpanel" aria-labelledby="emm-json-tab">
+                <div class="tab-pane fade show active" id="emm-json" role="tabpanel" aria-labelledby="emm-json-tab">
+                    <div id="json-menu">
+                        <a href="javascript:emdtJsonCollapseAll();">Collapse all</a> | 
+                        <a href="javascript:emdtJsonExpandAll();">Expand all</a>
+                    </div>
+                    <div id="json"></div>
                 </div>
             </div>
+            <script>
+                function emdtJsonCollapseAll() {
+                    $('a.list-link').not('.collapsed').each(function(){
+                        this.click();
+                    })
+                }
+                function emdtJsonExpandAll() {
+                    $('a.list-link.collapsed').each(function(){
+                        this.click()
+                    })
+                }
+
+                $(function(){
+                    var jsonViewer = new JSONViewer();
+                    var json = <?= json_encode($Proj) ?>;
+                    document.querySelector("#json").appendChild(jsonViewer.getContainer());
+                    jsonViewer.showJSON(json, -1, 2);
+                });
+            </script>
             <?php
         }
         else {
@@ -364,6 +510,18 @@ class PageInfo {
 
     public static function IsMySQLSimpleAdmin() {
         return (strpos(PAGE, "ExternalModules/?prefix=mysql_simple_admin&page=index") !== false) || (strpos(PAGE, "external_modules/?prefix=mysql_simple_admin&page=index") !== false);
+    }
+
+    public static function IsDesigner() {
+        return (strpos(PAGE, "Design/online_designer.php") === 0);
+    }
+
+    public static function IsDataEntry() {
+        return (strpos(PAGE, "DataEntry/index.php") === 0);
+    }
+
+    public static function IsSurvey() {
+        return (strpos(PAGE, "surveys/index.php") === 0);
     }
 
     public static function HasGETParameter($name) {

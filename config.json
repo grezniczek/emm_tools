@@ -1,8 +1,8 @@
 {
-    "name": "External Module Management Tools",
+    "name": "External Module Development Tools",
     "tt_name": "module_name",
-    "namespace": "DE\\RUB\\EMMToolsExternalModule",
-    "description": "An external module providing enhancements for EM management.",
+    "namespace": "DE\\RUB\\EMDToolsExternalModule",
+    "description": "An external module providing tools and enhancements with regard for EM development.",
     "tt_description": "module_desc",
     "documentation": "README.md",
     "tt_documentation": "module_docs",
@@ -15,21 +15,29 @@
     ],
     "framework-version": 3,
     "permissions": [
-        "redcap_every_page_top"
+        "redcap_every_page_top",
+        "redcap_data_entry_form",
+        "redcap_survey_page"
     ],
     "enable-every-page-hooks-on-system-pages": true,
     "links": {
         "project": [
             {
-                "name": "Project Object",
+                "name": "Project Object Inspector",
+                "key": "project-object-inspector",
                 "tt_name": "link_projectobject",
                 "icon": "fas fa-stethoscope",
                 "url": "project-object.php",
                 "show-header-and-footer": true
+            },
+            {
+                "name": "<SET VIA CODE>",
+                "key": "toggle-field-annotations",
+                "icon": "fas fa-eye",
+                "url": "javascript:EMDTToggleShowFieldAnnotations(); //"
             }
         ],
         "system": [
-
         ]
     },
     "system-settings": [
@@ -77,6 +85,12 @@
             "key": "enable-projectobject",
             "name": "Enable the <b>Project Object</b> link (displays the project object)",
             "tt_name": "config_enable_projectobject",
+            "type": "checkbox"
+        },
+        {
+            "key": "enable-fieldannotations",
+            "name": "Enable the <b>Toggle Field Annotations</b> link (when on, appends field annotations to field labels)",
+            "tt_name": "config_enable_fieldannotations",
             "type": "checkbox"
         }
     ],

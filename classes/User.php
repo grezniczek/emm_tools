@@ -1,4 +1,4 @@
-<?php namespace DE\RUB\EMMToolsExternalModule;
+<?php namespace DE\RUB\EMDToolsExternalModule;
 
 use ExternalModules\Framework;
 use ExternalModules\ExternalModules;
