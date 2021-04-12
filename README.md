@@ -34,11 +34,17 @@ Features provided are:
   ![Screensnip: Return to Project Shortcut](images/return_to_project.png)
 - **Module config query in MySQL Simple Admin** - Adds shortcut links for individual modules on the _Module Manager_ pages, which open the _MySQL Simple Admin_ external module in a new browser tab (automatically performing a query for the module's settings in the current context).
 - **Record data query link** - Adds a shortcut link for to the _Record Actions_ menu on the _Record Home Page_ that opens the _MySQL Simple Admin_ external module in a new browser tab, automatically performing a query for the record in the _redcap_data_ table.
+  ![Screensnip: Record Action Menu](images/record-actions.png)
 - **Record log query link** - Adds a shortcut link for to the _Record Actions_ menu on the _Record Home Page_ that opens the _MySQL Simple Admin_ external module in a new browser tab, automatically performing a query for the record in the appropriate _redcap_log_event_ table.
-- **Project Object Inspector** - A plugin page that prints the Project object.
-- **Show Field Annotations** - When turned on (via a link in the External Modules section of REDCap's main project-context menu), field annotations will be displayed on data entry forms and survey pages in the respective field's label. In case the field is embedded, the annotations will be appended to the embedding container.  
+- **Project Links**  
+  ![Screensnip: Project-Context Menu Links](images/project-menu-links.png)
+  - **Project Object Inspector** - A plugin page that prints the Project object.
+  ![Screensnip: Project Object Inspector](images/project-object.png)
+  - **Show Field Annotations** - When turned on (via a link in the External Modules section of REDCap's main project-context menu), field annotations will be displayed on data entry forms and survey pages in the respective field's label. In case the field is embedded, the annotations will be appended to the embedding container.  
   Additionally, the Online Designer overview will have EMDT badges that show the field annotations when hovered over. Note that certain operations will remove the badges until the page is reloaded.  
   **Note**: Pages have to be reloaded after switching on/off field annotations.
+  ![Screensnip: Field Annotations, Data Entry Form](images/field-annotations.png)
+  ![Screensnip: Field Annotations, Designer](images/designer-annotations.png)
 
 ## Testing
 
