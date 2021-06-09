@@ -54,6 +54,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.4.1  | Supports CSRF tokens in AJAX requests.
 v1.4.0  | Module renamed to _External Module **Developer** Tools_.<br>New feature: Show Field Annotations.<br>New feature: Project Object as JSON.
 v1.3.3  | Bug fix: USERID check done right (avoids exceptions in some cases).
 v1.3.2  | Bug fix: SUPER_USER check done right (avoids exceptions in some cases).

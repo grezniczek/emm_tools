@@ -280,6 +280,8 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     $state.html('<i class="fas fa-spinner fa-spin"></i>').attr('working','1')
                     $.ajax({
                         url: '<?= $this->getUrl("toggle-fieldannotations.php") ?>',
+                        data: { redcap_csrf_token: '<?= $this->getCSRFToken() ?>' },
+                        method: 'POST',
                         success: function(data, textStatus, jqXHR) {
                             console.log('AJAX done: ', data, jqXHR)
                             state = data
