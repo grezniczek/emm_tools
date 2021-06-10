@@ -99,7 +99,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     <?php
                 }
                 else if (PageInfo::IsSystemExternalModulesManager() && PageInfo::HasGETParameter("reveal-module")) {
-                    $moduleName = $_GET["reveal-module"];
+                    $moduleName = strip_tags($_GET["reveal-module"]);
                     $returnPid = PageInfo::SanitizeProjectID($_GET["return-pid"]);
                     $triggerTimeout = $this->getSystemSetting("module-manager-reveal-timeout");
                     if (!is_numeric($triggerTimeout)) $triggerTimeout = 50;
@@ -245,7 +245,8 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         // Query for record data.
         if ($user->isSuperUser() && $user->canAccessAdminDashboards()) {
             if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record") && $this->_isModuleEnabled("mysql_simple_admin")) {
-                $data_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$_GET['id']}&query-for=data";
+                $record_id = urlencode(strip_tags(label_decode(urldecode($_GET['id']))));
+                $data_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$record_id}&query-for=data";
                 ?>
                 <script>
                     $(function(){
@@ -257,7 +258,8 @@ class EMDToolsExternalModule extends AbstractExternalModule {
             }
             // Query for record logs.
             if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record-log") && $this->_isModuleEnabled("mysql_simple_admin")) {
-                $logs_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$_GET['id']}&query-for=logs";
+                $record_id = urlencode(strip_tags(label_decode(urldecode($_GET['id']))));
+                $logs_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$record_id}&query-for=logs";
                 ?>
                 <script>
                     $(function(){
