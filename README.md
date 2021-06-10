@@ -54,6 +54,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.5.1  | Security fix: JS injection via a URL parameter.
 v1.5.0  | Supports CSRF tokens in AJAX requests (Framework v8).<br>Prevents some false positives in PSALM testing.
 v1.4.0  | Module renamed to _External Module **Developer** Tools_.<br>New feature: Show Field Annotations.<br>New feature: Project Object as JSON.
 v1.3.3  | Bug fix: USERID check done right (avoids exceptions in some cases).

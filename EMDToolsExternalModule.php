@@ -99,7 +99,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     <?php
                 }
                 else if (PageInfo::IsSystemExternalModulesManager() && PageInfo::HasGETParameter("reveal-module")) {
-                    $moduleName = strip_tags($_GET["reveal-module"]);
+                    $moduleName = json_encode($_GET["reveal-module"]);
                     $returnPid = PageInfo::SanitizeProjectID($_GET["return-pid"]);
                     $triggerTimeout = $this->getSystemSetting("module-manager-reveal-timeout");
                     if (!is_numeric($triggerTimeout)) $triggerTimeout = 50;
