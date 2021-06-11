@@ -107,13 +107,18 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     ?>
                     <script>
                         $(function() {
-                            var titleDiv = $('tr[data-module="<?=$moduleName?>"] td div.external-modules-title').first()
-                            var title = titleDiv.text().trim().split(' - v')[0]
-                            var search = $('#enabled-modules-search')
-                            setTimeout(function() {
-                            search.val(title)
-                            search.trigger('keyup')
-                            }, <?=$triggerTimeout?>)
+                            try {
+                                var titleDiv = $('tr[data-module="' + <?=$moduleName?> + '"] td div.external-modules-title').first()
+                                var title = titleDiv.text().trim().split(' - v')[0]
+                                var search = $('#enabled-modules-search')
+                                setTimeout(function() {
+                                    search.val(title)
+                                    search.trigger('keyup')
+                                }, <?=$triggerTimeout?>)
+                            }
+                            catch {
+                                console.error('EMDT: Failed to find module \'' + <?=$moduleName?> + '\'')
+                            }
                             <?php if ($returnPid != null) {
                                 $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/project.php?pid=" . $returnPid;
                                 ?>
