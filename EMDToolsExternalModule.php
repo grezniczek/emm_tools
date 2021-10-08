@@ -234,14 +234,18 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                         $execute = !empty($record);
                     }
                     if ($execute) {
-                    ?>
-                    <script>
-                        $(function() {
-                            $('#query').val(<?=json_encode($query)?>)
-                            $('#form button').click()
-                        })
-                    </script>
-                    <?php
+                        // Insert EM Framework CSRF token. Note: Need to set for both names! Not clear why this is needed.
+                        $token = $this->getCSRFToken();
+                        ?>
+                        <script>
+                            $(function() {
+                                $('#query').val(<?=json_encode($query)?>)
+                                $('#form').append('<input type="hidden" name="redcap_external_module_csrf_token" value="<?=$token?>">')
+                                $('#form').append('<input type="hidden" name="redcap_csrf_token" value="<?=$token?>">')
+                                $('#form').submit()
+                            })
+                        </script>
+                        <?php
                     }
                 }
             }
