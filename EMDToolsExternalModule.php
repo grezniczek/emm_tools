@@ -148,9 +148,11 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         
         // MySQL Simple Admin Shortcuts
         if ($user->canAccessAdminDashboards()) {
+            $mysqlSimpleAdminEnabled = $this->_isModuleEnabled("mysql_simple_admin");
+            $mysqlSimpleAdminShowLinks =  $this->getSystemSetting("mysql-simple-admin-links");
             if ((PageInfo::IsProjectExternalModulesManager() || PageInfo::IsSystemExternalModulesManager() || PageInfo::IsMySQLSimpleAdmin()) &&
-                $this->getSystemSetting("mysql-simple-admin-links") && 
-                $this->_isModuleEnabled("mysql_simple_admin")) {
+                $mysqlSimpleAdminEnabled && 
+                $mysqlSimpleAdminShowLinks) {
                 if (PageInfo::IsProjectExternalModulesManager()) {
                     $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&module-prefix=";
                     ?>
@@ -229,7 +231,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                         }
                         else if ($mode == "logs") {
                             $log_event_table = \REDCap::getLogEventTable($pid);
-                            $query = "SELECT * FROM {$log_event_table}\n WHERE `project_id` = 49 AND `pk` = '{$record}'\n ORDER BY `log_event_id` DESC";
+                            $query = "SELECT * FROM {$log_event_table}\n WHERE `project_id` = {$pid} AND `pk` = '{$record}'\n ORDER BY `log_event_id` DESC";
                         }
                         $execute = !empty($record);
                     }
@@ -253,7 +255,8 @@ class EMDToolsExternalModule extends AbstractExternalModule {
 
         // Query for record data.
         if ($user->isSuperUser() && $user->canAccessAdminDashboards()) {
-            if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record") && $this->_isModuleEnabled("mysql_simple_admin")) {
+            $mysqlSimpleAdminEnabled = $this->_isModuleEnabled("mysql_simple_admin");
+            if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record") && $mysqlSimpleAdminEnabled) {
                 $record_id = urlencode(strip_tags(label_decode(urldecode($_GET['id']))));
                 $data_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$record_id}&query-for=data";
                 ?>
@@ -266,7 +269,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 <?php
             }
             // Query for record logs.
-            if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record-log") && $this->_isModuleEnabled("mysql_simple_admin")) {
+            if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record-log") && $mysqlSimpleAdminEnabled) {
                 $record_id = urlencode(strip_tags(label_decode(urldecode($_GET['id']))));
                 $logs_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$record_id}&query-for=logs";
                 ?>
@@ -510,11 +513,11 @@ class PageInfo {
     }
 
     public static function IsSystemExternalModulesManager() {
-        return (strpos(PAGE, "ExternalModules/manager/control_center.php") !== false) || (strpos(PAGE, "external_modules/manager/control_center.php") !== false);
+        return (strpos(PAGE, "manager/control_center.php") !== false);
     }
 
     public static function IsProjectExternalModulesManager() {
-        return (strpos(PAGE, "ExternalModules/manager/project.php") !== false) || (strpos(PAGE, "external_modules/manager/project.php") !== false);
+        return (strpos(PAGE, "manager/project.php") !== false);
     }
 
     public static function IsDevelopmentFramework($module) {
@@ -522,7 +525,7 @@ class PageInfo {
     }
 
     public static function IsMySQLSimpleAdmin() {
-        return (strpos(PAGE, "ExternalModules/?prefix=mysql_simple_admin&page=index") !== false) || (strpos(PAGE, "external_modules/?prefix=mysql_simple_admin&page=index") !== false);
+        return $_GET["prefix"] == "mysql_simple_admin" && $_GET["page"] == "index";
     }
 
     public static function IsDesigner() {

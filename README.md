@@ -6,7 +6,7 @@ A REDCap external module providing tools and enhancements with regard for EM dev
 
 ## Requirements
 
-- REDCAP 11.1.1 or newer.
+- REDCAP 12.0.7 or newer.
 - MySQL Simple Admin external module (for certain features).
 
 ## Installation
@@ -54,6 +54,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.6.0  | Compatibility fixes with v12.0.7.<br>Major bug fix for querying record logs.
 v1.5.3  | Bugfix: CSRF token exception in case of "remote control" of MySQL Simple Admin.
 v1.5.2  | Fix of the v1.5.1 fix. Thanks @ Mark McEver!
 v1.5.1  | Security fix: JS injection via a URL parameter.
