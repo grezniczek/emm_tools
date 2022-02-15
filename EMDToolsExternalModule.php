@@ -10,6 +10,17 @@ require_once "classes/User.php";
  */
 class EMDToolsExternalModule extends AbstractExternalModule {
 
+    /**
+     * EM Framework (tooling support)
+     * @var \ExternalModules\Framework
+     */
+    private $fw;
+
+    function __construct() {
+        parent::__construct();
+        $this->fw = $this->framework;
+    }
+
     function redcap_data_entry_form ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $repeat_instance = 1) {
         if ($this->getProjectSetting("enable-fieldannotations") == true && $this->getProjectSetting("show-fieldannotations") == true) {
             $this->insertFieldAnnotations($instrument);
@@ -23,10 +34,8 @@ class EMDToolsExternalModule extends AbstractExternalModule {
     }
 
     function redcap_every_page_top($project_id = null) {
-
-        $fw = $this->framework; // Shortcut to the EM framework.
         $user_id = defined("USERID") ? USERID : null;
-        $user = new User($fw, $user_id);
+        $user = new User($this->fw, $user_id);
 
         if ($project_id != null && 
             $this->getProjectSetting("enable-fieldannotations") == true && 
@@ -62,7 +71,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 ?>
                 <script>
                     $(function(){
-                        $('#external-modules-enable-modules-button').after('&nbsp;&nbsp;&nbsp;<a class="btn btn-light btn-sm" role="button" href="<?=$link?>"><i class="fas fa-sign-out-alt"></i> <?=$fw->tt("mmslink_label")?></a>')
+                        $('#external-modules-enable-modules-button').after('&nbsp;&nbsp;&nbsp;<a class="btn btn-light btn-sm" role="button" href="<?=$link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("mmslink_label")?></a>')
                     })
                 </script>
                 <?php
@@ -80,7 +89,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                             $('#external-modules-enabled tr[data-module]').each(function() {
                                 var tr = $(this)
                                 var moduleName = tr.attr('data-module')
-                                var link = $('<a href="<?=$link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-cog" style="margin-right:2px;"></i> <?=$fw->tt("reveallink_label")?></a>')
+                                var link = $('<a href="<?=$link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-cog" style="margin-right:2px;"></i> <?=$this->fw->tt("reveallink_label")?></a>')
                                 var td = tr.find('td').first();
                                 if (td.find('div.external-modules-byline').length) {
                                     var div = td.find('div.external-modules-byline').first()
@@ -122,7 +131,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                             <?php if ($returnPid != null) {
                                 $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/project.php?pid=" . $returnPid;
                                 ?>
-                                $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$link?>"><i class="fas fa-sign-out-alt"></i> <?=$fw->tt("returnlink_label", $returnPid)?></a></div>')
+                                $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("returnlink_label", $returnPid)?></a></div>')
                                 <?php
                             }
                             ?>
@@ -137,7 +146,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                         ?>
                         <script>
                             $(function() {
-                                $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$link?>"><i class="fas fa-sign-out-alt"></i> <?=$fw->tt("returnlink_label", $returnPid)?></a></div>')
+                                $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("returnlink_label", $returnPid)?></a></div>')
                             })
                         </script>
                         <?php
@@ -161,7 +170,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                             $('#external-modules-enabled tr[data-module]').each(function() {
                                 var tr = $(this)
                                 var moduleName = tr.attr('data-module')
-                                var link = $('<a target="_blank" href="<?=$link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-database" style="margin-right:2px;"></i> <?=$fw->tt("mysqllink_label")?></a>')
+                                var link = $('<a target="_blank" href="<?=$link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-database" style="margin-right:2px;"></i> <?=$this->fw->tt("mysqllink_label")?></a>')
                                 var td = tr.find('td').first();
                                 if (td.find('div.external-modules-byline').length) {
                                     var div = td.find('div.external-modules-byline').first()
@@ -187,7 +196,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                             $('#external-modules-enabled tr[data-module]').each(function() {
                                 var tr = $(this)
                                 var moduleName = tr.attr('data-module')
-                                var link = $('<a target="_blank" href="<?=$link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-database" style="margin-right:2px;"></i> <?=$fw->tt("mysqllink_label")?></a>')
+                                var link = $('<a target="_blank" href="<?=$link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-database" style="margin-right:2px;"></i> <?=$this->fw->tt("mysqllink_label")?></a>')
                                 var td = tr.find('td').first();
                                 if (td.find('div.external-modules-byline').length) {
                                     var div = td.find('div.external-modules-byline').first()
@@ -213,7 +222,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     $pid_clause = $pid === "NULL" ? "project_id IS NULL" : "project_id = {$pid}";
                     $execute = false;
                     if ($prefix) {
-                        $result = $fw->query("
+                        $result = $this->fw->query("
                             select external_module_id 
                             from redcap_external_modules 
                             where directory_prefix = ?",
@@ -263,7 +272,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 <script>
                     $(function(){
                         var $ul = $('#recordActionDropdown')
-                        $ul.append('<li class="ui-menu-item"><a href="<?=$data_link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database"></i> <?=$fw->tt("mysqllink_record_data")?></span></a></li>')
+                        $ul.append('<li class="ui-menu-item"><a href="<?=$data_link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database"></i> <?=$this->fw->tt("mysqllink_record_data")?></span></a></li>')
                     })
                 </script>
                 <?php
@@ -276,7 +285,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 <script>
                     $(function(){
                         var $ul = $('#recordActionDropdown')
-                        $ul.append('<li class="ui-menu-item"><a href="<?=$logs_link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database" style="color:red;"></i> <?=$fw->tt("mysqllink_record_logs")?></span></a></li>')
+                        $ul.append('<li class="ui-menu-item"><a href="<?=$logs_link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database" style="color:red;"></i> <?=$this->fw->tt("mysqllink_record_logs")?></span></a></li>')
                     })
                 </script>
                 <?php
