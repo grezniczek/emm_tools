@@ -34,8 +34,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
     }
 
     function redcap_every_page_top($project_id = null) {
-        $user_id = defined("USERID") ? USERID : null;
-        $user = new User($this->fw, $user_id);
+        $user = new User($this->fw, defined("USERID") ? USERID : null);
 
         if ($project_id != null && 
             $this->getProjectSetting("enable-fieldannotations") == true && 
@@ -324,11 +323,13 @@ class EMDToolsExternalModule extends AbstractExternalModule {
     }
 
     function redcap_module_link_check_display($project_id, $link) {
+        $user = new User($this->fw, defined("USERID") ? USERID : null);
+        $is_su = $user->isSuperUser();
         if ($project_id && $link["key"] == "project-object-inspector") {
-            return (defined("SUPER_USER") && SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) ? $link : null;
+            return ($is_su && $this->getSystemSetting("enable-projectobject") == true) ? $link : null;
         }
         if ($project_id && $link["key"] == "toggle-field-annotations") {
-            if (defined("SUPER_USER") && SUPER_USER && $this->getSystemSetting("enable-fieldannotations") == true) {
+            if ($is_su && $this->getSystemSetting("enable-fieldannotations") == true) {
                 $state = $this->getProjectSetting("show-fieldannotations") == true ? "on" : "off";
                 $link["name"] = $this->tt("link_fieldannotations") . "<b id=\"emdt-fieldannotations-state\">" . $this->tt("link_fieldannotations_{$state}") . "</b>";
                 return $link;
@@ -404,7 +405,8 @@ class EMDToolsExternalModule extends AbstractExternalModule {
 
     function inspectProjectObject() {
         global $Proj, $lang;
-        if (defined("SUPER_USER") && SUPER_USER && $this->getSystemSetting("enable-projectobject") == true) {
+        $user = new User($this->fw, defined("USERID") ? USERID : null);
+        if ($user->isSuperUser() && $this->getSystemSetting("enable-projectobject") == true) {
 
             $script_url = $this->getUrl("js/json-viewer.js");
             print "<script src=\"{$script_url}\"></script>\n";
