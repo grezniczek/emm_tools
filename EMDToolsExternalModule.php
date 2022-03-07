@@ -392,7 +392,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                                 });
                             }
                             else {
-                                $('#label-' + field).append($annotation);
+                                $('div[data-mlm-field="' + field + '"]').append($annotation);
                             }
                             $annotation.show();
                         }
