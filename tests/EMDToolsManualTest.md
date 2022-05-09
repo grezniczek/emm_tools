@@ -1,12 +1,12 @@
 # External Module Developer Tools - Manual Testing Procedure
 
-Version 1 - 2020-04-13
+Version 2 - 2022-05-09
 
 ## Prerequisites
 
+- REDCap v12.3.0 or newer.
 - _External Module Developer Tools_ is enabled on the system.
 - A test project with a non-super user account having project design rights.
-- Optional: _MySQL Simple Admin_ external module installed and enabled.
 
 ## Test Procedure
 
@@ -17,7 +17,7 @@ Version 1 - 2020-04-13
 1. As a super user, go to the test project's _External Modules_ page and verify the following:
    - Next to the _Enable a module_ button there is an additional button labeled _Control Center > Module Manager_.
    - The _Reveal in Control Center_ link is shown for each currently endabled module (there should at least be the _External Module Management Tools_).
-   - The _Query in MySQL Simple Admin_ link is shown for each currently endabled module. This is only shown if the _MySQL Simple Admin_ external module is enabled on the system.
+   - The _Query in Database Query Tool_ link is shown for each currently enabled module.
 1. Click the _Control Center > Module Manager_ button and verify the following:
    - The link took you to the _External Modules - Module Manager_ page.
    - Above the _Modules Currently Available on this System_ list there is a button labeled _Return to project X_ (where X is the project id of the test project).
@@ -29,14 +29,14 @@ Version 1 - 2020-04-13
    - Only the _External Module Developer Tools_ entry is shown (or any other module matching the search text).
    - Above the _Modules Currently Available on this System_ list there is a button labeled _Return to project X_ (where X is the project id of the test project).
 1. Return to the test project by clicking the _Return to project_ button.
-1. If the _MySQL Simple Admin_ module is enabled, click on the _Query in MySQL Simple Admin_ link of the _External Module Developer Tools_ entry and verify the following:
-   - You have been taken to the _MySQL Simple Admin_ plugin page.
+1. Click on the _Query in Database Query Tool_ link of the _External Module Developer Tools_ entry and verify the following:
+   - You have been taken to the _Database Query Tool_ page.
    - A query matching the following has been executed:  
      `select * from redcap_external_module_settings where external_module_id = ? and project_id = ?`
 1. Access the test project using the non-super user account with project design rights.
 1. Click the _External Modules_ link in the main menu and verify the following:
    - The _External Module Developer Tools_ external module is **not** showing in the list.
-   - The button or links to the Control Center pages or the _MySQL Simple Admin_ plugin are not shown.
+   - The button or links to the Control Center pages or the _Database Query Tool_ are not shown.
 
 Done.
 
