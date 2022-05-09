@@ -65,19 +65,19 @@
         },
         {
             "key": "mysql-simple-admin-links",
-            "name": "<b>MySQL Simple Admin Shortcut:</b><br>Adds a link to enabled modules that opens the MySQL Simple Admin EM page, prefilled with a query for this module's settings",
+            "name": "<b>Database Query Tool Shortcut:</b><br>Adds a link to enabled modules that opens the Database Query Tool page, prefilled with a query for this module's settings",
             "tt_name": "config_mysqlsimpleadmin",
             "type": "checkbox"
         },
         {
             "key": "mysql-simple-admin-query-record",
-            "name": "<b>Query Record Data</b> (MySQL Simple Admin Shortcut)<br>Adds a link to _record actions_ that opens the MySQL Simple Admin EM page, prefilled with a query for this record in the redcap_data table",
+            "name": "<b>Query Record Data</b>:<br>Adds a link to _record actions_ that opens the Database Query Tool page, prefilled with a query for this record in the redcap_data table",
             "tt_name": "config_queryrecord_data",
             "type": "checkbox"
         },
         {
             "key": "mysql-simple-admin-query-record-log",
-            "name": "<b>Query Record Log</b> (MySQL Simple Admin Shortcut)<br>Adds a link to _record actions_ that opens the MySQL Simple Admin EM page, prefilled with a query for this record in the redcap_log_event table",
+            "name": "<b>Query Record Log</b>:<br>Adds a link to _record actions_ that opens the Database Query Tool page, prefilled with a query for this record in the redcap_log_event table",
             "tt_name": "config_queryrecord_log",
             "type": "checkbox"
         },
@@ -97,9 +97,9 @@
     "project-settings": [
     ],
     "compatibility": {
-        "php-version-min": "5.6.0",
+        "php-version-min": "7.4.0",
         "php-version-max": "",
-        "redcap-version-min": "12.0.7",
+        "redcap-version-min": "12.3.0",
         "redcap-version-max": ""
      }
 }
