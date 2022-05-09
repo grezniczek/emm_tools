@@ -6,8 +6,7 @@ A REDCap external module providing tools and enhancements with regard for EM dev
 
 ## Requirements
 
-- REDCAP 12.0.7 or newer.
-- MySQL Simple Admin external module (for certain features).
+- REDCAP 12.3.0 or newer.
 
 ## Installation
 
@@ -32,16 +31,16 @@ Features provided are:
   ![Screensnip: Module System Configuration Shortcut](images/reveal_module_shortcut.png)
 - Both provide a 'Return to project' link is displayed on the _Module Manager_ page.
   ![Screensnip: Return to Project Shortcut](images/return_to_project.png)
-- **Module config query in MySQL Simple Admin** - Adds shortcut links for individual modules on the _Module Manager_ pages, which open the _MySQL Simple Admin_ external module in a new browser tab (automatically performing a query for the module's settings in the current context).
-- **Record data query link** - Adds a shortcut link for to the _Record Actions_ menu on the _Record Home Page_ that opens the _MySQL Simple Admin_ external module in a new browser tab, automatically performing a query for the record in the _redcap_data_ table.
+- **Module config query in Database Query Tool** - Adds shortcut links for individual modules on the _Module Manager_ pages, which open the _Database Query Tool_ in a new browser tab (automatically performing a query for the module's settings in the current context).
+- **Record data query link** - Adds a shortcut link for to the _Record Actions_ menu on the _Record Home Page_ that opens the _Database Query Tool_ in a new browser tab, automatically performing a query for the record in the _redcap_data_ table.
   ![Screensnip: Record Action Menu](images/record-actions.png)
-- **Record log query link** - Adds a shortcut link for to the _Record Actions_ menu on the _Record Home Page_ that opens the _MySQL Simple Admin_ external module in a new browser tab, automatically performing a query for the record in the appropriate _redcap_log_event_ table.
+- **Record log query link** - Adds a shortcut link for to the _Record Actions_ menu on the _Record Home Page_ that opens the _Database Query Tool_ in a new browser tab, automatically performing a query for the record in the appropriate _redcap_log_event_ table.
 - **Project Links**  
   ![Screensnip: Project-Context Menu Links](images/project-menu-links.png)
   - **Project Object Inspector** - A plugin page that prints the Project object.
   ![Screensnip: Project Object Inspector](images/project-object.png)
   - **Show Field Annotations** - When turned on (via a link in the External Modules section of REDCap's main project-context menu), field annotations will be displayed on data entry forms and survey pages in the respective field's label. In case the field is embedded, the annotations will be appended to the embedding container.  
-  Additionally, the Online Designer overview will have EMDT badges that show the field annotations when hovered over. Note that certain operations will remove the badges until the page is reloaded.  
+  Additionally, the Online Designer overview will have EMDT badges that show the field annotations when hovered over, and clicking on field names will copy them to the clipboard (when supported by the browser). 
   **Note**: Pages have to be reloaded after switching on/off field annotations.
   ![Screensnip: Field Annotations, Data Entry Form](images/field-annotations.png)
   ![Screensnip: Field Annotations, Designer](images/designer-annotations.png)
@@ -54,6 +53,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.8.0  | REDCap v12.3 Database Query Tool integration; Field Annotation enhancements.
 v1.7.0  | Bugfix: Injection of field annotations in REDCap v12+.
 v1.6.0  | Compatibility fixes with v12.0.7.<br>Major bug fix for querying record logs.
 v1.5.3  | Bugfix: CSRF token exception in case of "remote control" of MySQL Simple Admin.

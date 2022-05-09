@@ -59,7 +59,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
 
         // At least super user who can access admin dashboard rights or a system config user are required for this module to do anything useful.
         // Thus, quit here if this condition is not met.
-        if (!(($user->isSuperUser() && $user->canAccessAdminDashboards()) || $user->canAccessSystemConfig())) {
+        if (!($user->isSuperUser() || $user->canAccessSystemConfig())) {
             return;
         }
 
@@ -154,15 +154,12 @@ class EMDToolsExternalModule extends AbstractExternalModule {
             }
         }
         
-        // MySQL Simple Admin Shortcuts
-        if ($user->canAccessAdminDashboards()) {
-            $mysqlSimpleAdminEnabled = $this->_isModuleEnabled("mysql_simple_admin");
-            $mysqlSimpleAdminShowLinks =  $this->getSystemSetting("mysql-simple-admin-links");
-            if ((PageInfo::IsProjectExternalModulesManager() || PageInfo::IsSystemExternalModulesManager() || PageInfo::IsMySQLSimpleAdmin()) &&
-                $mysqlSimpleAdminEnabled && 
-                $mysqlSimpleAdminShowLinks) {
+        // Database Query Tool Shortcuts
+        if ($user->isSuperUser()) {
+            $databaseQueryTool_showLinks =  $this->getSystemSetting("mysql-simple-admin-links");
+            if ((PageInfo::IsProjectExternalModulesManager() || PageInfo::IsSystemExternalModulesManager() || PageInfo::IsDatabaseQueryTool()) && $databaseQueryTool_showLinks) {
                 if (PageInfo::IsProjectExternalModulesManager()) {
-                    $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&module-prefix=";
+                    $link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid={$project_id}&module-prefix=";
                     ?>
                     <script>
                         $(function(){
@@ -188,7 +185,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     <?php
                 }
                 else if (PageInfo::IsSystemExternalModulesManager()) {
-                    $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid=NULL&module-prefix=";
+                    $link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid=0&module-prefix=";
                     ?>
                     <script>
                         $(function(){
@@ -213,12 +210,12 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     </script>
                     <?php
                 }
-                else if (PageInfo::IsMySQLSimpleAdmin()) {
+                else if (PageInfo::IsDatabaseQueryTool()) {
                     $prefix = $_GET["module-prefix"];
                     $record = $_GET["query-record"];
                     $mode = $_GET["query-for"];
                     $pid = (int)$_GET["query-pid"];
-                    $pid_clause = $pid === "NULL" ? "project_id IS NULL" : "project_id = {$pid}";
+                    $pid_clause = $pid === 0 ? "project_id IS NULL" : "project_id = {$pid}";
                     $execute = false;
                     if ($prefix) {
                         $result = $this->fw->query("
@@ -262,11 +259,10 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         }
 
         // Query for record data.
-        if ($user->isSuperUser() && $user->canAccessAdminDashboards()) {
-            $mysqlSimpleAdminEnabled = $this->_isModuleEnabled("mysql_simple_admin");
-            if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record") && $mysqlSimpleAdminEnabled) {
+        if ($user->isSuperUser()) {
+            if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record")) {
                 $record_id = urlencode(strip_tags(label_decode(urldecode($_GET['id']))));
-                $data_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$record_id}&query-for=data";
+                $data_link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid={$project_id}&query-record={$record_id}&query-for=data";
                 ?>
                 <script>
                     $(function(){
@@ -277,9 +273,9 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 <?php
             }
             // Query for record logs.
-            if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record-log") && $mysqlSimpleAdminEnabled) {
+            if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record-log")) {
                 $record_id = urlencode(strip_tags(label_decode(urldecode($_GET['id']))));
-                $logs_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/?prefix=mysql_simple_admin&page=index&query-pid={$project_id}&query-record={$record_id}&query-for=logs";
+                $logs_link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid={$project_id}&query-record={$record_id}&query-for=logs";
                 ?>
                 <script>
                     $(function(){
@@ -348,59 +344,125 @@ class EMDToolsExternalModule extends AbstractExternalModule {
 
     function insertFieldAnnotations($form, $designer = false) {
         global $Proj;
-        $num_annotations = 0;
         foreach ($Proj->forms[$form]["fields"] as $field => $_) {
             $annotations = $Proj->metadata[$field]["misc"];
-            if (!empty($annotations)) {
-                print "<div class=\"emdt-field-annotation\" data-target=\"{$field}\" style=\"display:none;font-weight:normal;padding:0.5em;margin-top:0.5em;background-color:#fafafa;\"><code style=\"white-space:pre;margin-top:0.5em;\">{$annotations}</code></div>\n";
-                $num_annotations++;
-            }
+            print "<div class=\"emdt-field-annotation\" data-target=\"{$field}\" style=\"display:none;font-weight:normal;padding:0.5em;margin-top:0.5em;background-color:#fafafa;\"><code style=\"white-space:pre;margin-top:0.5em;\">{$annotations}</code></div>\n";
         }
-        if ($num_annotations) {
-            ?>
-            <script>
-                // EMD Tools - Append Field Annotations
-                $(function() {
-                    var designer = <?= json_encode($designer) ?>;
-                    $('.emdt-field-annotation').each(function() {
-                        var $annotation = $(this);
-                        var field = $annotation.attr('data-target');
-                        var $badge = $('<span class="badge badge-info" style="font-weight:normal;">EMDT</span>');
-                        if (designer) {
+        ?>
+        <style>
+            .copy-field-name { 
+                cursor: hand !important; 
+            }
+        </style>
+        <script>
+            /**
+             * Copies a string to the clipboard (fallback method for older browsers)
+             * @param {string} text
+             */
+            function EMMTools_fallbackCopyTextToClipboard(text) {
+                var textArea = document.createElement("textarea");
+                textArea.value = text;
+                // Avoid scrolling to bottom
+                textArea.style.top = "0";
+                textArea.style.left = "0";
+                textArea.style.position = "fixed";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } catch {
+                    error('Failed to copy text to clipboard.')
+                }
+                document.body.removeChild(textArea);
+            }
+            /**
+             * Copies a string to the clipboard (supported in modern browsers)
+             * @param {string} text
+             * @returns
+             */
+            function EMMTools_copyTextToClipboard(text) {
+                if (!navigator.clipboard) {
+                    EMMTools_fallbackCopyTextToClipboard(text);
+                    return;
+                }
+                navigator.clipboard.writeText(text).catch(function() {
+                    error('Failed to copy text to clipboard.')
+                })
+            }
+            // EMM Tools - Append Field Annotations
+            function EMMTools_init() {
+                var designer = <?= json_encode($designer) ?>;
+                if (designer) {
+                    $('span[data-kind="variable-name"]').each(function() {
+                        const $this = $(this)
+                        $this.addClass('copy-field-name text-info')
+                        $this.on('mousedown', function(e) {
+                            e.stopImmediatePropagation()
+                        })
+                        const field = $this.text()
+                        $this.on('click', function() {
+                            EMMTools_copyTextToClipboard(field);
+                            $this.css('background-color', 'red')
+                            setTimeout(function() {
+                                $this.css('background-color', 'transparent')
+                            }, 200)
+                            return false;
+                        })
+                        $annotation = $('.emdt-field-annotation[data-target="' + field + '"]')
+                        if ($annotation.length) {
+                            const $badge = $('<span class="badge badge-info" style="font-weight:normal;">EMDT</span>');
                             $badge.attr('title', $annotation.text()).css('margin-left','1em');
                             $('#design-' + field + ' span.od-field-icons').append($badge);
                         }
-                        else {
-                            var embedded = $('[sq_id="' + field + '"]').hasClass('row-field-embedded');
-                            $badge.css('margin-bottom','0.5em');
-                            $annotation.prepend('<br>');
-                            $annotation.prepend($badge);
-                            $badge.after('<small><i> &ndash; ' + field + '</i></small>');
-                            if (embedded) {
-                                $badge.removeClass('badge-info').addClass('badge-warning');
-                                var $embed = $('span.rc-field-embed[var="' + field + '"]')
-                                $embed.parents('tr[sq_id]').find('td').not('.questionnum').first().append($annotation);
-                                $badge.css('cursor', 'crosshair');
-                                $badge.on('mouseenter', function() {
-                                    $embed.css('outline', 'red dotted 2px');
-                                });
-                                $badge.on('mouseleave', function() {
-                                    $embed.css('outline','none');
-                                });
-                                $badge.on('click', function() {
-                                    $embed.find('input').focus();
-                                });
-                            }
-                            else {
-                                $('div[data-mlm-field="' + field + '"]').append($annotation);
-                            }
-                            $annotation.show();
-                        }
                     })
-                });
-            </script>
-            <?php
-        }
+                }
+                else {
+                    $('.emdt-field-annotation').each(function() {
+                        const $annotation = $(this);
+                        const field = $annotation.attr('data-target');
+                        const $badge = $('<span class="badge badge-info" style="font-weight:normal;">EMDT</span>');
+                        const embedded = $('[sq_id="' + field + '"]').hasClass('row-field-embedded');
+                        $badge.css('margin-bottom','0.5em');
+                        $annotation.prepend('<br>');
+                        $annotation.prepend($badge);
+                        $badge.after('<small><i> &ndash; ' + field + '</i></small>');
+                        if (embedded) {
+                            $badge.removeClass('badge-info').addClass('badge-warning');
+                            var $embed = $('span.rc-field-embed[var="' + field + '"]')
+                            $embed.parents('tr[sq_id]').find('td').not('.questionnum').first().append($annotation);
+                            $badge.css('cursor', 'crosshair');
+                            $badge.on('mouseenter', function() {
+                                $embed.css('outline', 'red dotted 2px');
+                            });
+                            $badge.on('mouseleave', function() {
+                                $embed.css('outline','none');
+                            });
+                            $badge.on('click', function() {
+                                $embed.find('input').focus();
+                            });
+                        }
+                        else {
+                            $('div[data-mlm-field="' + field + '"]').after($annotation);
+                        }
+                        $annotation.show();
+                    })
+                }
+            }
+            $(function() {
+                if (<?=json_encode($designer)?>) {
+                    const EMMTools_reloadDesignTable = reloadDesignTable
+                    reloadDesignTable = function(form_name, js) {
+                        EMMTools_reloadDesignTable(form_name, js)
+                        setTimeout(function() {
+                            EMMTools_init()
+                        }, 50)
+                    }
+                }
+                EMMTools_init()
+            });
+        </script>
+        <?php
     }
 
     function inspectProjectObject() {
@@ -535,8 +597,8 @@ class PageInfo {
         return strpos($module->framework->getUrl("dummy.php"), "/external_modules/?prefix=") !== false;
     }
 
-    public static function IsMySQLSimpleAdmin() {
-        return $_GET["prefix"] == "mysql_simple_admin" && $_GET["page"] == "index";
+    public static function IsDatabaseQueryTool() {
+        return strpos(PAGE_FULL, "ControlCenter/database_query_tool.php") !== false;
     }
 
     public static function IsDesigner() {
