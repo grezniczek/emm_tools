@@ -107,7 +107,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     <?php
                 }
                 else if (PageInfo::IsSystemExternalModulesManager() && PageInfo::HasGETParameter("reveal-module")) {
-                    $moduleName = json_encode($_GET["reveal-module"]);
+                    $moduleName = json_encode(htmlentities($_GET["reveal-module"], ENT_QUOTES));
                     $returnPid = PageInfo::SanitizeProjectID($_GET["return-pid"]);
                     $triggerTimeout = $this->getSystemSetting("module-manager-reveal-timeout");
                     if (!is_numeric($triggerTimeout)) $triggerTimeout = 50;
@@ -213,8 +213,8 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 else if (PageInfo::IsDatabaseQueryTool()) {
                     $prefix = $_GET["module-prefix"];
                     $record = $_GET["query-record"];
-                    $mode = $_GET["query-for"];
-                    $pid = (int)$_GET["query-pid"];
+                    $mode = $_GET["query-for"] == "data" ? "data" : "logs";
+                    $pid = PageInfo::SanitizeProjectID($_GET["query-pid"]);
                     $pid_clause = $pid === 0 ? "project_id IS NULL" : "project_id = {$pid}";
                     $execute = false;
                     if ($prefix) {
