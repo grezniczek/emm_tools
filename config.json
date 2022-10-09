@@ -42,6 +42,12 @@
     },
     "system-settings": [
         {
+            "key": "instance-isdev",
+            "name": "<b>REDCap Development Instance:</b><br>Controls the <i>is_development_server</i> flag in REDCap's configuration. When enabled, faulty EMs will not automatically be deactivated",
+            "tt_name": "config_devinstance",
+            "type": "checkbox"
+        },
+        {
             "key": "module-manager-shortcut",
             "name": "<b>Module Manager Shortcut:</b><br>Adds a shortcut link to 'Control Center &gt; External Modules' on the Project Module Manager page",
             "tt_name": "config_mmslink",

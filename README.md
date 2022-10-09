@@ -44,6 +44,7 @@ Features provided are:
   **Note**: Pages have to be reloaded after switching on/off field annotations.
   ![Screensnip: Field Annotations, Data Entry Form](images/field-annotations.png)
   ![Screensnip: Field Annotations, Designer](images/designer-annotations.png)
+- **REDCap Development Instance** - Mirrors the state of the _is_development_server_ config flag in REDCap's configuration. When enabled on a REDCap system, faulty EMs are no longer automatically disabed. This may lead to REDCap not being accessible. Do not use this on a production server!
 
 ## Testing
 
@@ -53,6 +54,7 @@ Instructions for testing the module can be found [here](?prefix=emm_tools&page=t
 
 Version | Description
 ------- | --------------------
+v1.8.1  | New system configuration flag: REDCap Development Instance (controls the state of the 'is_development_server' config flag).
 v1.8.0  | REDCap v12.3 Database Query Tool integration; Field Annotation enhancements.
 v1.7.0  | Bugfix: Injection of field annotations in REDCap v12+.
 v1.6.0  | Compatibility fixes with v12.0.7.<br>Major bug fix for querying record logs.

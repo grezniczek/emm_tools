@@ -334,6 +334,22 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         return null;
     }
 
+    // function redcap_module_save_configuration($project_id) {
+    //     if ($project_id == null) {
+    //         // Synchronize development instance setting with the corresponding REDCap config flag
+    //         $is_dev = $this->getSystemSetting("instance-isdev") ?? false;
+    //         self::setIsDevInstanceConfigFlag($is_dev);
+    //     }
+    // }
+    
+    // function redcap_module_configure_button_display($project_id) {
+    //     if ($project_id == null) {
+    //         // Synchronize development instance setting with the corresponding REDCap config flag
+    //         $is_dev = self::getIsDevInstanceConfigFlag();
+    //         $this->setSystemSetting("instance-isdev", $is_dev);
+    //     }
+    // }
+
     function toggleFieldAnnotation() {
         $state = $this->getProjectSetting("show-fieldannotations") == true;
         $state = !$state;
