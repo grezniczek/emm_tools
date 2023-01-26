@@ -377,14 +377,32 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         if ($result->num_rows == 1) {
             $row = $result->fetch_assoc();
             $module_id = $row["external_module_id"];
-            $this->query(
-                "DELETE FROM `redcap_external_module_settings` 
-                 WHERE `external_module_id` = ? AND `project_id` = ? AND `key` NOT IN ('version','enabled')",
-                [
-                    $module_id,
-                    $pid
-                ]
-            );
+            if ($pid == null) {
+                $delete_query = $this->fw->createQuery()->add(
+                    "DELETE FROM `redcap_external_module_settings` 
+                     WHERE `external_module_id` = ? AND ISNULL(`project_id`) AND `key` NOT IN ('version','enabled')",
+                    [
+                        $module_id
+                    ]
+                );
+            }
+            else {
+                $delete_query = $this->fw->createQuery()->add(
+                    "DELETE FROM `redcap_external_module_settings` 
+                     WHERE `external_module_id` = ? AND `project_id` = ? AND `key` NOT IN ('version','enabled')",
+                    [
+                        $module_id,
+                        $pid
+                    ]
+                );
+            }
+        }
+        $sql = $delete_query->getSQL();
+        $deleted = $delete_query->execute();
+        if ($deleted) {
+            $msg = "Deleted " . ($pid == null ? "system " : "") . "settings for module '$module_name' " . ($pid == null ? "" : "in project $pid ") . "using the External Module Developer Tools EM";
+            \REDCap::logEvent($msg, "", $sql, null, null, $pid);
+            $this->fw->log($msg);
         }
     }
 
