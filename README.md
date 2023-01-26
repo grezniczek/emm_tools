@@ -6,7 +6,7 @@ A REDCap external module providing tools and enhancements with regard for EM dev
 
 ## Requirements
 
-- REDCAP 12.3.0 or newer.
+- REDCAP 12.5.9 or newer (Framework Version 11).
 
 ## Installation
 
@@ -21,7 +21,7 @@ Manual installation:
 
 ## Configuration and Effects
 
-Enable the features you want in this module's **system configuration**. Make sure to **enable the module for all projects** (or for specific projects, e.g. during development). In any case, this module will be invisible to non-admin users. To use all features, at least _Access to all projects and data with maximum user privileges_ and _Access to Control Center dashboards_ are required.
+Make sure to **enable the module for all projects** (or for specific projects, e.g. during development). In any case, this module will be invisible to non-admin users. To use all features, at least _Access to all projects and data with maximum user privileges_ and _Access to Control Center dashboards_ are required.
 
 Features provided are:
 
@@ -44,15 +44,13 @@ Features provided are:
   **Note**: Pages have to be reloaded after switching on/off field annotations.
   ![Screensnip: Field Annotations, Data Entry Form](images/field-annotations.png)
   ![Screensnip: Field Annotations, Designer](images/designer-annotations.png)
-
-## Testing
-
-Instructions for testing the module can be found [here](?prefix=emm_tools&page=tests/EMDToolsManualTest.md).
+- **Purging of External Module settings** - Adds a link to the _External Module Manager_ pages (project and control center) that allows purging of a module's settings in that context. All data will be purged from the _redcap_external_module_settings_ table, except for `enabled` and `version`.
 
 ## Changelog
 
 Version | Description
 ------- | --------------------
+v1.9.0  | All features on always. New feature to purge the settings of any external module (per project, and system settings).
 v1.8.0  | REDCap v12.3 Database Query Tool integration; Field Annotation enhancements.
 v1.7.0  | Bugfix: Injection of field annotations in REDCap v12+.
 v1.6.0  | Compatibility fixes with v12.0.7.<br>Major bug fix for querying record logs.
