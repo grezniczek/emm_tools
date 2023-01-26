@@ -50,7 +50,7 @@ Features provided are:
 
 Version | Description
 ------- | --------------------
-v1.9.0  | All features on always. New feature to purge the settings of any external module (per project, and system settings).
+v1.9.0  | All features are now always on - no more configuration.<br>New feature to purge the project or system settings of any external module.
 v1.8.0  | REDCap v12.3 Database Query Tool integration; Field Annotation enhancements.
 v1.7.0  | Bugfix: Injection of field annotations in REDCap v12+.
 v1.6.0  | Compatibility fixes with v12.0.7.<br>Major bug fix for querying record logs.

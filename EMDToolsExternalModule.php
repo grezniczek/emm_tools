@@ -173,7 +173,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                                 queryLink.html('<i class="fas fa-database" style="margin-right:2px;"></i> <?=js_escape($this->fw->tt("mysqllink_label"))?>');
                                 const purgeLink = $('<a href="javascript:"></a>');
                                 purgeLink.html('<i class="fas fa-database text-danger" style="margin-right:2px;"></i> <?=js_escape($this->fw->tt("mysqlpurge_project_label"))?>');
-                                purgeLink.on('click', () => DE_RUB_EMDTools.purgeSettings(moduleName, null));
+                                purgeLink.on('click', () => DE_RUB_EMDTools.purgeSettings(moduleName, <?=$project_id?>));
                                 const td = tr.find('td').first();
                                 if (td.find('div.external-modules-byline').length) {
                                     const div = td.find('div.external-modules-byline').first()
@@ -376,7 +376,15 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         ]);
         if ($result->num_rows == 1) {
             $row = $result->fetch_assoc();
-            $module_id = $row["external_module_id"] * 1;
+            $module_id = $row["external_module_id"];
+            $this->query(
+                "DELETE FROM `redcap_external_module_settings` 
+                 WHERE `external_module_id` = ? AND `project_id` = ? AND `key` NOT IN ('version','enabled')",
+                [
+                    $module_id,
+                    $pid
+                ]
+            );
         }
     }
 

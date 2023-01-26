@@ -28,7 +28,8 @@
             JSMO.ajax('purge-settings', {
                 module: moduleName,
                 pid: pid
-            });
+            })
+            .then(() => log('Purge successful.')); // No catch - EM throws and exceptions are reported by the framework
         }
     }
 
@@ -84,7 +85,7 @@
      * @param {IArguments} args
      */
     function log_print(ln, mode, args) {
-        var prompt = 'EMDT v' + config.version + ' [' + ln + ']';
+        var prompt = 'EMDT ' + config.version + ' [' + ln + ']';
         switch(args.length) {
             case 1:
                 console[mode](prompt, args[0]);

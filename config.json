@@ -1,5 +1,5 @@
 {
-    "name": "External Module Development Tools",
+    "name": "External Module Developer Tools",
     "tt_name": "module_name",
     "namespace": "DE\\RUB\\EMDToolsExternalModule",
     "description": "An external module providing tools and enhancements with regard for EM development.",
