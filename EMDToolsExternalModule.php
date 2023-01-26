@@ -1,5 +1,6 @@
 <?php namespace DE\RUB\EMDToolsExternalModule;
 
+use Exception;
 use ExternalModules\AbstractExternalModule;
 use InvalidArgumentException;
 
@@ -16,10 +17,14 @@ class EMDToolsExternalModule extends AbstractExternalModule {
      */
     private $fw;
 
+    private $js_injected = false;
+
     function __construct() {
         parent::__construct();
         $this->fw = $this->framework;
     }
+
+    #region Hooks
 
     function redcap_data_entry_form ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $repeat_instance = 1) {
         if ($this->getProjectSetting("enable-fieldannotations") == true && $this->getProjectSetting("show-fieldannotations") == true) {
@@ -65,12 +70,12 @@ class EMDToolsExternalModule extends AbstractExternalModule {
 
         // Module Manager Shortcut
         if ($user->canAccessSystemConfig() || $user->canAccessAdminDashboards()) {
-            if (PageInfo::IsProjectExternalModulesManager() && $this->getSystemSetting("module-manager-shortcut")) {
-                $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/control_center.php?return-pid={$project_id}";
+            if (PageInfo::IsProjectExternalModulesManager()) {
+                $query_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/control_center.php?return-pid={$project_id}";
                 ?>
                 <script>
                     $(function(){
-                        $('#external-modules-enable-modules-button').after('&nbsp;&nbsp;&nbsp;<a class="btn btn-light btn-sm" role="button" href="<?=$link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("mmslink_label")?></a>')
+                        $('#external-modules-enable-modules-button').after('&nbsp;&nbsp;&nbsp;<a class="btn btn-light btn-sm" role="button" href="<?=$query_link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("mmslink_label")?></a>')
                     })
                 </script>
                 <?php
@@ -79,104 +84,108 @@ class EMDToolsExternalModule extends AbstractExternalModule {
 
         // Module Manager Reveal.
         if ($user->canAccessSystemConfig() || $user->canAccessAdminDashboards()) {
-            if ($this->getSystemSetting("module-manager-reveal")) {
-                if (PageInfo::IsProjectExternalModulesManager()) {
-                    $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/control_center.php?return-pid={$project_id}&reveal-module=";
-                    ?>
-                    <script>
-                        $(function(){
-                            $('#external-modules-enabled tr[data-module]').each(function() {
-                                var tr = $(this)
-                                var moduleName = tr.attr('data-module')
-                                var link = $('<a href="<?=$link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-cog" style="margin-right:2px;"></i> <?=$this->fw->tt("reveallink_label")?></a>')
-                                var td = tr.find('td').first();
-                                if (td.find('div.external-modules-byline').length) {
-                                    var div = td.find('div.external-modules-byline').first()
-                                    div.append(link)
-                                }
-                                else {
-                                    var div = $('<div class="external-modules-byline"></div>')
-                                    div.append(link)
-                                    link.css('display', 'block')
-                                    link.css('margin-top', '7px')
-                                    td.append(div)
-                                }
-                            })
+            if (PageInfo::IsProjectExternalModulesManager()) {
+                $query_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/control_center.php?return-pid={$project_id}&reveal-module=";
+                ?>
+                <script>
+                    $(function(){
+                        $('#external-modules-enabled tr[data-module]').each(function() {
+                            var tr = $(this)
+                            var moduleName = tr.attr('data-module')
+                            var link = $('<a href="<?=$query_link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-cog" style="margin-right:2px;"></i> <?=$this->fw->tt("reveallink_label")?></a>')
+                            var td = tr.find('td').first();
+                            if (td.find('div.external-modules-byline').length) {
+                                var div = td.find('div.external-modules-byline').first()
+                                div.append(link)
+                            }
+                            else {
+                                var div = $('<div class="external-modules-byline"></div>')
+                                div.append(link)
+                                link.css('display', 'block')
+                                link.css('margin-top', '7px')
+                                td.append(div)
+                            }
                         })
-                    </script>
-                    <?php
-                }
-                else if (PageInfo::IsSystemExternalModulesManager() && PageInfo::HasGETParameter("reveal-module")) {
-                    $moduleName = json_encode(htmlentities($_GET["reveal-module"], ENT_QUOTES));
-                    $returnPid = PageInfo::SanitizeProjectID($_GET["return-pid"]);
-                    $triggerTimeout = $this->getSystemSetting("module-manager-reveal-timeout");
-                    if (!is_numeric($triggerTimeout)) $triggerTimeout = 50;
-                    $triggerTimeout = abs($triggerTimeout);
+                    })
+                </script>
+                <?php
+            }
+            else if (PageInfo::IsSystemExternalModulesManager() && PageInfo::HasGETParameter("reveal-module")) {
+                $moduleName = json_encode(htmlentities($_GET["reveal-module"], ENT_QUOTES));
+                $returnPid = PageInfo::SanitizeProjectID($_GET["return-pid"]);
+                $triggerTimeout = $this->getSystemSetting("module-manager-reveal-timeout");
+                if (!is_numeric($triggerTimeout)) $triggerTimeout = 50;
+                $triggerTimeout = abs($triggerTimeout);
+                ?>
+                <script>
+                    $(function() {
+                        try {
+                            var titleDiv = $('tr[data-module="' + <?=$moduleName?> + '"] td div.external-modules-title').first()
+                            var title = titleDiv.text().trim().split(' - v')[0]
+                            var search = $('#enabled-modules-search')
+                            setTimeout(function() {
+                                search.val(title)
+                                search.trigger('keyup')
+                            }, <?=$triggerTimeout?>)
+                        }
+                        catch {
+                            console.error('EMDT: Failed to find module \'' + <?=$moduleName?> + '\'')
+                        }
+                        <?php if ($returnPid != null) {
+                            $query_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/project.php?pid=" . $returnPid;
+                            ?>
+                            $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$query_link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("returnlink_label", $returnPid)?></a></div>')
+                            <?php
+                        }
+                        ?>
+                    })
+                </script>
+                <?php
+            }
+            else if (PageInfo::IsSystemExternalModulesManager() && PageInfo::HasGETParameter("return-pid")) {
+                $returnPid = PageInfo::SanitizeProjectID($_GET["return-pid"]);
+                if ($returnPid != null) {
+                    $query_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/project.php?pid=" . $returnPid;
                     ?>
                     <script>
                         $(function() {
-                            try {
-                                var titleDiv = $('tr[data-module="' + <?=$moduleName?> + '"] td div.external-modules-title').first()
-                                var title = titleDiv.text().trim().split(' - v')[0]
-                                var search = $('#enabled-modules-search')
-                                setTimeout(function() {
-                                    search.val(title)
-                                    search.trigger('keyup')
-                                }, <?=$triggerTimeout?>)
-                            }
-                            catch {
-                                console.error('EMDT: Failed to find module \'' + <?=$moduleName?> + '\'')
-                            }
-                            <?php if ($returnPid != null) {
-                                $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/project.php?pid=" . $returnPid;
-                                ?>
-                                $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("returnlink_label", $returnPid)?></a></div>')
-                                <?php
-                            }
-                            ?>
+                            $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$query_link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("returnlink_label", $returnPid)?></a></div>')
                         })
                     </script>
                     <?php
-                }
-                else if (PageInfo::IsSystemExternalModulesManager() && PageInfo::HasGETParameter("return-pid")) {
-                    $returnPid = PageInfo::SanitizeProjectID($_GET["return-pid"]);
-                    if ($returnPid != null) {
-                        $link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/project.php?pid=" . $returnPid;
-                        ?>
-                        <script>
-                            $(function() {
-                                $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("returnlink_label", $returnPid)?></a></div>')
-                            })
-                        </script>
-                        <?php
-                    }
                 }
             }
         }
         
         // Database Query Tool Shortcuts
         if ($user->isSuperUser()) {
-            $databaseQueryTool_showLinks =  $this->getSystemSetting("mysql-simple-admin-links");
-            if ((PageInfo::IsProjectExternalModulesManager() || PageInfo::IsSystemExternalModulesManager() || PageInfo::IsDatabaseQueryTool()) && $databaseQueryTool_showLinks) {
+            if (PageInfo::IsProjectExternalModulesManager() || PageInfo::IsSystemExternalModulesManager() || PageInfo::IsDatabaseQueryTool()) {
                 if (PageInfo::IsProjectExternalModulesManager()) {
-                    $link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid={$project_id}&module-prefix=";
+                    $this->inject_js();
+                    $query_link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid={$project_id}&module-prefix=";
                     ?>
                     <script>
                         $(function(){
                             $('#external-modules-enabled tr[data-module]').each(function() {
-                                var tr = $(this)
-                                var moduleName = tr.attr('data-module')
-                                var link = $('<a target="_blank" href="<?=$link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-database" style="margin-right:2px;"></i> <?=$this->fw->tt("mysqllink_label")?></a>')
-                                var td = tr.find('td').first();
+                                const tr = $(this);
+                                const moduleName = tr.attr('data-module');
+                                const queryLink = $('<a target="_blank" href="<?=$query_link?>' + moduleName + '" style="margin-right:1em;"></a>');
+                                queryLink.html('<i class="fas fa-database" style="margin-right:2px;"></i> <?=js_escape($this->fw->tt("mysqllink_label"))?>');
+                                const purgeLink = $('<a href="javascript:"></a>');
+                                purgeLink.html('<i class="fas fa-database text-danger" style="margin-right:2px;"></i> <?=js_escape($this->fw->tt("mysqlpurge_project_label"))?>');
+                                purgeLink.on('click', () => DE_RUB_EMDTools.purgeSettings(moduleName, <?=$project_id?>));
+                                const td = tr.find('td').first();
                                 if (td.find('div.external-modules-byline').length) {
-                                    var div = td.find('div.external-modules-byline').first()
-                                    div.append(link)
+                                    const div = td.find('div.external-modules-byline').first()
+                                    div.append(queryLink)
+                                    div.append(purgeLink)
                                 }
                                 else {
-                                    var div = $('<div class="external-modules-byline"></div>')
-                                    div.append(link)
-                                    link.css('display', 'block')
-                                    link.css('margin-top', '7px')
+                                    const div = $('<div class="external-modules-byline"></div>')
+                                    div.append(queryLink)
+                                    div.append(purgeLink)
+                                    queryLink.css('display', 'block')
+                                    queryLink.css('margin-top', '7px')
                                     td.append(div)
                                 }
                             })
@@ -185,25 +194,32 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     <?php
                 }
                 else if (PageInfo::IsSystemExternalModulesManager()) {
-                    $link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid=0&module-prefix=";
+                    $this->inject_js();
+                    $query_link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid=0&module-prefix=";
                     ?>
                     <script>
                         $(function(){
                             $('#external-modules-enabled tr[data-module]').each(function() {
-                                var tr = $(this)
-                                var moduleName = tr.attr('data-module')
-                                var link = $('<a target="_blank" href="<?=$link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-database" style="margin-right:2px;"></i> <?=$this->fw->tt("mysqllink_label")?></a>')
-                                var td = tr.find('td').first();
+                                const tr = $(this);
+                                const moduleName = tr.attr('data-module');
+                                const queryLink = $('<a target="_blank" href="<?=$query_link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-database" style="margin-right:2px;"></i></a>');
+                                queryLink.html('<i class="fas fa-database" style="margin-right:2px;"></i> <?=js_escape($this->fw->tt("mysqllink_label"))?>')
+                                const purgeLink = $('<a href="javascript:"></a>');
+                                purgeLink.html('<i class="fas fa-database text-danger" style="margin-right:2px;"></i> <?=js_escape($this->fw->tt("mysqlpurge_cc_label"))?>');
+                                purgeLink.on('click', () => DE_RUB_EMDTools.purgeSettings(moduleName, null));
+                                const td = tr.find('td').first();
                                 if (td.find('div.external-modules-byline').length) {
-                                    var div = td.find('div.external-modules-byline').first()
-                                    div.append(link)
+                                    const div = td.find('div.external-modules-byline').first();
+                                    div.append(queryLink);
+                                    div.append(purgeLink);
                                 }
                                 else {
-                                    var div = $('<div class="external-modules-byline"></div>')
-                                    div.append(link)
-                                    link.css('display', 'block')
-                                    link.css('margin-top', '7px')
-                                    td.append(div)
+                                    const div = $('<div class="external-modules-byline"></div>');
+                                    div.append(queryLink);
+                                    div.append(purgeLink);
+                                    queryLink.css('display', 'block');
+                                    queryLink.css('margin-top', '7px');
+                                    td.append(div);
                                 }
                             })
                         })
@@ -260,7 +276,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
 
         // Query for record data.
         if ($user->isSuperUser()) {
-            if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record")) {
+            if (PageInfo::IsExistingRecordHomePage()) {
                 $record_id = urlencode(strip_tags(label_decode(urldecode($_GET['id']))));
                 $data_link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid={$project_id}&query-record={$record_id}&query-for=data";
                 ?>
@@ -273,7 +289,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 <?php
             }
             // Query for record logs.
-            if (PageInfo::IsExistingRecordHomePage() && $this->getSystemSetting("mysql-simple-admin-query-record-log")) {
+            if (PageInfo::IsExistingRecordHomePage()) {
                 $record_id = urlencode(strip_tags(label_decode(urldecode($_GET['id']))));
                 $logs_link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid={$project_id}&query-record={$record_id}&query-for=logs";
                 ?>
@@ -322,16 +338,80 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         $user = new User($this->fw, defined("USERID") ? USERID : null);
         $is_su = $user->isSuperUser();
         if ($project_id && $link["key"] == "project-object-inspector") {
-            return ($is_su && $this->getSystemSetting("enable-projectobject") == true) ? $link : null;
+            return $is_su ? $link : null;
         }
         if ($project_id && $link["key"] == "toggle-field-annotations") {
-            if ($is_su && $this->getSystemSetting("enable-fieldannotations") == true) {
+            if ($is_su) {
                 $state = $this->getProjectSetting("show-fieldannotations") == true ? "on" : "off";
                 $link["name"] = $this->tt("link_fieldannotations") . "<b id=\"emdt-fieldannotations-state\">" . $this->tt("link_fieldannotations_{$state}") . "</b>";
                 return $link;
             }
         }
         return null;
+    }
+
+    function redcap_module_ajax($action, $payload, $project_id, $record, $instrument, $event_id, $repeat_instance, $survey_hash, $response_id, $survey_queue_hash, $page, $page_full, $user_id, $group_id) {
+        $user = new User($this->fw, $user_id);
+        switch($action) {
+            case "purge-settings": {
+                if ($user->isSuperUser()) {
+                    $this->purge_settings($payload["module"], $payload["pid"]);
+                }
+                else {
+                    throw new Exception("Insufficient rights.");
+                }
+            }
+            break;
+        }
+        return null;
+    }
+
+    #endregion
+
+
+    private function purge_settings($module_name, $pid) {
+        // Get module id from name
+        $result = $this->query("SELECT `external_module_id` FROM `redcap_external_modules` WHERE `directory_prefix` = ?", [
+            $module_name
+        ]);
+        if ($result->num_rows == 1) {
+            $row = $result->fetch_assoc();
+            $module_id = $row["external_module_id"];
+            $this->query(
+                "DELETE FROM `redcap_external_module_settings` 
+                 WHERE `external_module_id` = ? AND `project_id` = ? AND `key` NOT IN ('version','enabled')",
+                [
+                    $module_id,
+                    $pid
+                ]
+            );
+        }
+    }
+
+    /**
+     * Adds and initializes the JS support file
+     */
+    private function inject_js() {
+        // Only do this once
+        if ($this->js_injected) return;
+        $config = [
+            "debug" => $this->getSystemSetting("debug-mode") == true,
+            "version" => $this->VERSION,
+        ];
+        $this->initializeJavascriptModuleObject();
+        $this->fw->tt_transferToJavascriptModuleObject(["mysqlpurge_confirm_msg"]);
+        $jsmo_name = $this->getJavascriptModuleObjectName();
+
+        #region Scripts and HTML
+        ?>
+        <script src="<?php print $this->getUrl('js/emdt.js'); ?>"></script>
+        <script>
+            $(function() {
+                DE_RUB_EMDTools.init(<?=json_encode($config)?>, <?=$jsmo_name?>);
+            });
+        </script>
+        <?php
+        $this->js_injected = true;
     }
 
     function toggleFieldAnnotation() {
@@ -468,7 +548,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
     function inspectProjectObject() {
         global $Proj, $lang;
         $user = new User($this->fw, defined("USERID") ? USERID : null);
-        if ($user->isSuperUser() && $this->getSystemSetting("enable-projectobject") == true) {
+        if ($user->isSuperUser()) {
 
             $script_url = $this->getUrl("js/json-viewer.js");
             print "<script src=\"{$script_url}\"></script>\n";

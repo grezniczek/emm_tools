@@ -1,6 +1,4 @@
-<?php
-
-namespace DE\RUB\EMDToolsExternalModule;
+<?php namespace DE\RUB\EMDToolsExternalModule;
 
 $module->inspectProjectObject();
 

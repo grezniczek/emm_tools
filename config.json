@@ -1,5 +1,5 @@
 {
-    "name": "External Module Development Tools",
+    "name": "External Module Developer Tools",
     "tt_name": "module_name",
     "namespace": "DE\\RUB\\EMDToolsExternalModule",
     "description": "An external module providing tools and enhancements with regard for EM development.",
@@ -13,7 +13,7 @@
             "institution": "Ruhr-Universität Bochum"
         }
     ],
-    "framework-version": 8,
+    "framework-version": 11,
     "permissions": [
         "redcap_every_page_top",
         "redcap_data_entry_form",
@@ -42,64 +42,27 @@
     },
     "system-settings": [
         {
-            "key": "module-manager-shortcut",
-            "name": "<b>Module Manager Shortcut:</b><br>Adds a shortcut link to 'Control Center &gt; External Modules' on the Project Module Manager page",
-            "tt_name": "config_mmslink",
-            "type": "checkbox"
-        },
-        {
-            "key": "module-manager-reveal",
-            "name": "<b>Module System Configuration Shortcut:</b><br>Adds a link to project-enabled modules that shows the 'Control Center &gt; External Modules' page for this module",
-            "tt_name": "config_reveallink",
-            "type": "checkbox"
-        },
-        {
             "key": "module-manager-reveal-timeout",
             "name": "Timeout (in milliseconds) before search is triggered (default = 50)",
-            "tt_name": "config_reveallink_timeout",
-            "type": "text",
-            "branchingLogic": {
-                "field": "config_reveallink",
-                "value": true
-            }
+            "tt_name": "config_reveal_timeout",
+            "type": "text"
         },
         {
-            "key": "mysql-simple-admin-links",
-            "name": "<b>Database Query Tool Shortcut:</b><br>Adds a link to enabled modules that opens the Database Query Tool page, prefilled with a query for this module's settings",
-            "tt_name": "config_mysqlsimpleadmin",
-            "type": "checkbox"
-        },
-        {
-            "key": "mysql-simple-admin-query-record",
-            "name": "<b>Query Record Data</b>:<br>Adds a link to _record actions_ that opens the Database Query Tool page, prefilled with a query for this record in the redcap_data table",
-            "tt_name": "config_queryrecord_data",
-            "type": "checkbox"
-        },
-        {
-            "key": "mysql-simple-admin-query-record-log",
-            "name": "<b>Query Record Log</b>:<br>Adds a link to _record actions_ that opens the Database Query Tool page, prefilled with a query for this record in the redcap_log_event table",
-            "tt_name": "config_queryrecord_log",
-            "type": "checkbox"
-        },
-        {
-            "key": "enable-projectobject",
-            "name": "Enable the <b>Project Object</b> link (displays the project object)",
-            "tt_name": "config_enable_projectobject",
-            "type": "checkbox"
-        },
-        {
-            "key": "enable-fieldannotations",
-            "name": "Enable the <b>Toggle Field Annotations</b> link (when on, appends field annotations to field labels)",
-            "tt_name": "config_enable_fieldannotations",
+            "key": "debug-mode",
+            "name": "Show debug information on the browser console",
+            "tt_name": "config_debug",
             "type": "checkbox"
         }
     ],
     "project-settings": [
     ],
+    "auth-ajax-actions": [
+        "purge-settings"
+    ],
     "compatibility": {
         "php-version-min": "7.4.0",
         "php-version-max": "",
-        "redcap-version-min": "12.3.0",
+        "redcap-version-min": "12.5.9",
         "redcap-version-max": ""
      }
 }
