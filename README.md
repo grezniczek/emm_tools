@@ -50,6 +50,7 @@ Features provided are:
 
 Version | Description
 ------- | --------------------
+v1.9.2  | Bugfix (Field Annotations Toggle)
 v1.9.1  | Bugfix + logging of settings deletion.
 v1.9.0  | All features are now always on - no more configuration.<br>New feature to purge the project or system settings of any external module.
 v1.8.0  | REDCap v12.3 Database Query Tool integration; Field Annotation enhancements.

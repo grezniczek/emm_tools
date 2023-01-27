@@ -34,7 +34,7 @@
                 "name": "<SET VIA CODE>",
                 "key": "toggle-field-annotations",
                 "icon": "fas fa-eye",
-                "url": "javascript:EMDTToggleShowFieldAnnotations(); //"
+                "url": "javascript:DE_RUB_EMDTools.toggleShowFieldAnnotations(); //"
             }
         ],
         "system": [
@@ -57,7 +57,8 @@
     "project-settings": [
     ],
     "auth-ajax-actions": [
-        "purge-settings"
+        "purge-settings",
+        "toggle-show-field-annotations"
     ],
     "compatibility": {
         "php-version-min": "7.4.0",

@@ -68,6 +68,8 @@ class EMDToolsExternalModule extends AbstractExternalModule {
             return;
         }
 
+        $this->inject_js();
+
         // Module Manager Shortcut
         if ($user->canAccessSystemConfig() || $user->canAccessAdminDashboards()) {
             if (PageInfo::IsProjectExternalModulesManager()) {
@@ -161,7 +163,6 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         if ($user->isSuperUser()) {
             if (PageInfo::IsProjectExternalModulesManager() || PageInfo::IsSystemExternalModulesManager() || PageInfo::IsDatabaseQueryTool()) {
                 if (PageInfo::IsProjectExternalModulesManager()) {
-                    $this->inject_js();
                     $query_link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid={$project_id}&module-prefix=";
                     ?>
                     <script>
@@ -194,7 +195,6 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     <?php
                 }
                 else if (PageInfo::IsSystemExternalModulesManager()) {
-                    $this->inject_js();
                     $query_link = APP_PATH_WEBROOT . "ControlCenter/database_query_tool.php?query-pid=0&module-prefix=";
                     ?>
                     <script>
@@ -304,7 +304,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         }
 
         // Toggle Field Annotations
-        if ($user->isSuperUser() && $project_id != null && $this->getProjectSetting("enable-fieldannotations") == true) {
+        if ($user->isSuperUser() && $project_id != null) {
             ?>
             <script>
                 function EMDTToggleShowFieldAnnotations() {
@@ -359,6 +359,12 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 }
                 else {
                     throw new Exception("Insufficient rights.");
+                }
+            }
+            break;
+            case 'toggle-show-field-annotations': {
+                if ($user->isSuperUser()) {
+                    return $this->toggleFieldAnnotation();
                 }
             }
             break;
