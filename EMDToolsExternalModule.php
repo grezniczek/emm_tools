@@ -27,13 +27,13 @@ class EMDToolsExternalModule extends AbstractExternalModule {
     #region Hooks
 
     function redcap_data_entry_form ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $repeat_instance = 1) {
-        if ($this->getProjectSetting("enable-fieldannotations") == true && $this->getProjectSetting("show-fieldannotations") == true) {
+        if ($this->getProjectSetting("show-fieldannotations") == true) {
             $this->insertFieldAnnotations($instrument);
         }
     }
 
     function redcap_survey_page ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
-        if ($this->getProjectSetting("enable-fieldannotations") == true && $this->getProjectSetting("show-fieldannotations") == true) {
+        if ($this->getProjectSetting("show-fieldannotations") == true) {
             $this->insertFieldAnnotations($instrument);
         }
     }
@@ -42,7 +42,6 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         $user = new User($this->fw, defined("USERID") ? USERID : null);
 
         if ($project_id != null && 
-            $this->getProjectSetting("enable-fieldannotations") == true && 
             $this->getProjectSetting("show-fieldannotations") == true &&
             PageInfo::IsDesigner()
            ) {
@@ -50,16 +49,14 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         }
 
         // Hide this module from users who cannot install EMs.
-        if (!($user->canAccessExternalModuleInstall())) {
-            if (PageInfo::IsProjectExternalModulesManager()) {
-                ?>
-                <script>
-                    $(function() {
-                        $('tr[data-module="<?=$this->PREFIX?>"]').remove();
-                    })
-                </script>
-                <?php
-            }
+        if (PageInfo::IsProjectExternalModulesManager() && !($user->canAccessExternalModuleInstall())) {
+            ?>
+            <script>
+                $(function() {
+                    $('tr[data-module="<?=$this->PREFIX?>"]').remove();
+                })
+            </script>
+            <?php
         }
 
         // At least super user who can access admin dashboard rights or a system config user are required for this module to do anything useful.
