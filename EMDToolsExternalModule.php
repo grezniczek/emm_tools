@@ -26,13 +26,13 @@ class EMDToolsExternalModule extends AbstractExternalModule {
 
     #region Hooks
 
-    function redcap_data_entry_form ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $repeat_instance = 1) {
+    function redcap_data_entry_form ($project_id, $record, $instrument, $event_id, $group_id, $repeat_instance = 1) {
         if ($this->getProjectSetting("show-fieldannotations") == true) {
             $this->insertFieldAnnotations($instrument);
         }
     }
 
-    function redcap_survey_page ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
+    function redcap_survey_page ($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance = 1) {
         if ($this->getProjectSetting("show-fieldannotations") == true) {
             $this->insertFieldAnnotations($instrument);
         }
