@@ -245,7 +245,8 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     else if ($record && $pid > 0) {
                         $record = db_escape($record);
                         if ($mode == "data") {
-                            $query = "SELECT * FROM redcap_data\n WHERE `project_id` = {$pid} AND `record` = '{$record}'";
+                            $data_table = method_exists('\REDCap', 'getDataTable') ? \REDCap::getDataTable($pid) : "redcap_data"; 
+                            $query = "SELECT * FROM $data_table\n WHERE `project_id` = {$pid} AND `record` = '{$record}'";
                         }
                         else if ($mode == "logs") {
                             $log_event_table = \REDCap::getLogEventTable($pid);
