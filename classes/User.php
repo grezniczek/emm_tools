@@ -6,7 +6,7 @@ use ExternalModules\ExternalModules;
 class User
 {
     /** @var Framework */
-    private $fw;
+    private $framework;
 
     /** @var string */
     private $username;
@@ -16,12 +16,12 @@ class User
 
     /**
      * Constructor
-     * @param Framework $fw 
+     * @param Framework $framework 
      * @param string $username 
      * @return void 
      */
-    function __construct($fw, $username) {
-        $this->fw = $fw;
+    function __construct($framework, $username) {
+        $this->framework = $framework;
         $this->username = $username;
     }
 
@@ -34,7 +34,7 @@ class User
             return true;
         }
         if(!$project_id) {
-            $project_id = $this->fw->requireProjectId();
+            $project_id = $this->framework->requireProjectId();
         }
         $rights = $this->getRights($project_id);
         return $rights['design'] === '1';
@@ -144,7 +144,7 @@ class User
 
     private function getUserInfo() {
         if(!$this->user_info) {
-            $results = $this->fw->query(
+            $results = $this->framework->query(
                 "SELECT * FROM redcap_user_information WHERE username = ?", 
                 [$this->username]
             );

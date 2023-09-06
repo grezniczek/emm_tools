@@ -11,18 +11,7 @@ require_once "classes/User.php";
  */
 class EMDToolsExternalModule extends AbstractExternalModule {
 
-    /**
-     * EM Framework (tooling support)
-     * @var \ExternalModules\Framework
-     */
-    private $fw;
-
     private $js_injected = false;
-
-    function __construct() {
-        parent::__construct();
-        $this->fw = $this->framework;
-    }
 
     #region Hooks
 
@@ -39,7 +28,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
     }
 
     function redcap_every_page_top($project_id = null) {
-        $user = new User($this->fw, defined("USERID") ? USERID : null);
+        $user = new User($this->framework, defined("USERID") ? USERID : null);
 
         if ($project_id != null && 
             $this->getProjectSetting("show-fieldannotations") == true &&
@@ -74,7 +63,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 ?>
                 <script>
                     $(function(){
-                        $('#external-modules-enable-modules-button').after('&nbsp;&nbsp;&nbsp;<a class="btn btn-light btn-sm" role="button" href="<?=$query_link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("mmslink_label")?></a>')
+                        $('#external-modules-enable-modules-button').after('&nbsp;&nbsp;&nbsp;<a class="btn btn-light btn-sm" role="button" href="<?=$query_link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->framework->tt("mmslink_label")?></a>')
                     })
                 </script>
                 <?php
@@ -91,7 +80,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                         $('#external-modules-enabled tr[data-module]').each(function() {
                             var tr = $(this)
                             var moduleName = tr.attr('data-module')
-                            var link = $('<a href="<?=$query_link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-cog" style="margin-right:2px;"></i> <?=$this->fw->tt("reveallink_label")?></a>')
+                            var link = $('<a href="<?=$query_link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-cog" style="margin-right:2px;"></i> <?=$this->framework->tt("reveallink_label")?></a>')
                             var td = tr.find('td').first();
                             if (td.find('div.external-modules-byline').length) {
                                 var div = td.find('div.external-modules-byline').first()
@@ -133,7 +122,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                         <?php if ($returnPid != null) {
                             $query_link = (PageInfo::IsDevelopmentFramework($this) ? APP_PATH_WEBROOT_PARENT . "external_modules" : APP_PATH_WEBROOT . "ExternalModules") . "/manager/project.php?pid=" . $returnPid;
                             ?>
-                            $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$query_link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("returnlink_label", $returnPid)?></a></div>')
+                            $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$query_link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->framework->tt("returnlink_label", $returnPid)?></a></div>')
                             <?php
                         }
                         ?>
@@ -148,7 +137,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     ?>
                     <script>
                         $(function() {
-                            $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$query_link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->fw->tt("returnlink_label", $returnPid)?></a></div>')
+                            $('#external-modules-enabled').siblings('h4').before('<div style="margin-bottom:7px;"><a class="btn btn-light btn-sm" role="button" href="<?=$query_link?>"><i class="fas fa-sign-out-alt"></i> <?=$this->framework->tt("returnlink_label", $returnPid)?></a></div>')
                         })
                     </script>
                     <?php
@@ -168,9 +157,9 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                                 const tr = $(this);
                                 const moduleName = tr.attr('data-module');
                                 const queryLink = $('<a target="_blank" href="<?=$query_link?>' + moduleName + '" style="margin-right:1em;"></a>');
-                                queryLink.html('<i class="fas fa-database" style="margin-right:2px;"></i> <?=js_escape($this->fw->tt("mysqllink_label"))?>');
+                                queryLink.html('<i class="fas fa-database" style="margin-right:2px;"></i> <?=js_escape($this->framework->tt("mysqllink_label"))?>');
                                 const purgeLink = $('<a href="javascript:"></a>');
-                                purgeLink.html('<i class="fas fa-database text-danger" style="margin-right:2px;"></i> <?=js_escape($this->fw->tt("mysqlpurge_project_label"))?>');
+                                purgeLink.html('<i class="fas fa-database text-danger" style="margin-right:2px;"></i> <?=js_escape($this->framework->tt("mysqlpurge_project_label"))?>');
                                 purgeLink.on('click', () => DE_RUB_EMDTools.purgeSettings(moduleName, <?=$project_id?>));
                                 const td = tr.find('td').first();
                                 if (td.find('div.external-modules-byline').length) {
@@ -200,9 +189,9 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                                 const tr = $(this);
                                 const moduleName = tr.attr('data-module');
                                 const queryLink = $('<a target="_blank" href="<?=$query_link?>' + moduleName + '" style="margin-right:1em;"><i class="fas fa-database" style="margin-right:2px;"></i></a>');
-                                queryLink.html('<i class="fas fa-database" style="margin-right:2px;"></i> <?=js_escape($this->fw->tt("mysqllink_label"))?>')
+                                queryLink.html('<i class="fas fa-database" style="margin-right:2px;"></i> <?=js_escape($this->framework->tt("mysqllink_label"))?>')
                                 const purgeLink = $('<a href="javascript:"></a>');
-                                purgeLink.html('<i class="fas fa-database text-danger" style="margin-right:2px;"></i> <?=js_escape($this->fw->tt("mysqlpurge_cc_label"))?>');
+                                purgeLink.html('<i class="fas fa-database text-danger" style="margin-right:2px;"></i> <?=js_escape($this->framework->tt("mysqlpurge_cc_label"))?>');
                                 purgeLink.on('click', () => DE_RUB_EMDTools.purgeSettings(moduleName, null));
                                 const td = tr.find('td').first();
                                 if (td.find('div.external-modules-byline').length) {
@@ -231,7 +220,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                     $pid_clause = $pid === 0 ? "project_id IS NULL" : "project_id = {$pid}";
                     $execute = false;
                     if ($prefix) {
-                        $result = $this->fw->query("
+                        $result = $this->framework->query("
                             select external_module_id 
                             from redcap_external_modules 
                             where directory_prefix = ?",
@@ -281,7 +270,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 <script>
                     $(function(){
                         var $ul = $('#recordActionDropdown')
-                        $ul.append('<li class="ui-menu-item"><a href="<?=$data_link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database"></i> <?=$this->fw->tt("mysqllink_record_data")?></span></a></li>')
+                        $ul.append('<li class="ui-menu-item"><a href="<?=$data_link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database"></i> <?=$this->framework->tt("mysqllink_record_data")?></span></a></li>')
                     })
                 </script>
                 <?php
@@ -294,7 +283,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 <script>
                     $(function(){
                         var $ul = $('#recordActionDropdown')
-                        $ul.append('<li class="ui-menu-item"><a href="<?=$logs_link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database" style="color:red;"></i> <?=$this->fw->tt("mysqllink_record_logs")?></span></a></li>')
+                        $ul.append('<li class="ui-menu-item"><a href="<?=$logs_link?>" target="_blank" style="display:block;" tabindex="-1" role="menuitem" class="ui-menu-item-wrapper"><span style="vertical-align:middle;color:#065499;"><i class="fas fa-database" style="color:red;"></i> <?=$this->framework->tt("mysqllink_record_logs")?></span></a></li>')
                     })
                 </script>
                 <?php
@@ -333,7 +322,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
     }
 
     function redcap_module_link_check_display($project_id, $link) {
-        $user = new User($this->fw, defined("USERID") ? USERID : null);
+        $user = new User($this->framework, defined("USERID") ? USERID : null);
         $is_su = $user->isSuperUser();
         if ($project_id && $link["key"] == "project-object-inspector") {
             return $is_su ? $link : null;
@@ -349,7 +338,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
     }
 
     function redcap_module_ajax($action, $payload, $project_id, $record, $instrument, $event_id, $repeat_instance, $survey_hash, $response_id, $survey_queue_hash, $page, $page_full, $user_id, $group_id) {
-        $user = new User($this->fw, $user_id);
+        $user = new User($this->framework, $user_id);
         switch($action) {
             case "purge-settings": {
                 if ($user->isSuperUser()) {
@@ -382,7 +371,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
             $row = $result->fetch_assoc();
             $module_id = $row["external_module_id"];
             if ($pid == null) {
-                $delete_query = $this->fw->createQuery()->add(
+                $delete_query = $this->framework->createQuery()->add(
                     "DELETE FROM `redcap_external_module_settings` 
                      WHERE `external_module_id` = ? AND ISNULL(`project_id`) AND `key` NOT IN ('version','enabled')",
                     [
@@ -391,7 +380,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
                 );
             }
             else {
-                $delete_query = $this->fw->createQuery()->add(
+                $delete_query = $this->framework->createQuery()->add(
                     "DELETE FROM `redcap_external_module_settings` 
                      WHERE `external_module_id` = ? AND `project_id` = ? AND `key` NOT IN ('version','enabled')",
                     [
@@ -406,7 +395,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
         if ($deleted) {
             $msg = "Deleted " . ($pid == null ? "system " : "") . "settings for module '$module_name' " . ($pid == null ? "" : "in project $pid ") . "using the External Module Developer Tools EM";
             \REDCap::logEvent($msg, "", $sql, null, null, $pid);
-            $this->fw->log($msg);
+            $this->framework->log($msg);
         }
     }
 
@@ -420,13 +409,13 @@ class EMDToolsExternalModule extends AbstractExternalModule {
             "debug" => $this->getSystemSetting("debug-mode") == true,
             "version" => $this->VERSION,
         ];
-        $this->initializeJavascriptModuleObject();
-        $this->fw->tt_transferToJavascriptModuleObject(["mysqlpurge_confirm_msg"]);
-        $jsmo_name = $this->getJavascriptModuleObjectName();
+        $this->framework->initializeJavascriptModuleObject();
+        $this->framework->tt_transferToJavascriptModuleObject(["mysqlpurge_confirm_msg"]);
+        $jsmo_name = $this->framework->getJavascriptModuleObjectName();
 
         #region Scripts and HTML
         ?>
-        <script src="<?php print $this->getUrl('js/emdt.js'); ?>"></script>
+        <script src="<?php print $this->framework->getUrl('js/emdt.js'); ?>"></script>
         <script>
             $(function() {
                 DE_RUB_EMDTools.init(<?=json_encode($config)?>, <?=$jsmo_name?>);
@@ -569,7 +558,7 @@ class EMDToolsExternalModule extends AbstractExternalModule {
 
     function inspectProjectObject() {
         global $Proj, $lang;
-        $user = new User($this->fw, defined("USERID") ? USERID : null);
+        $user = new User($this->framework, defined("USERID") ? USERID : null);
         if ($user->isSuperUser()) {
 
             $script_url = $this->getUrl("js/json-viewer.js");

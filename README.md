@@ -50,6 +50,7 @@ Features provided are:
 
 Version | Description
 ------- | --------------------
+v1.9.x  | Remove constructor.
 v1.9.5  | Support multiple redcap_data tables.
 v1.9.4  | Prevent some PHP8 warnings.
 v1.9.3  | Bugfix (Field Annotations Toggle - still more).
